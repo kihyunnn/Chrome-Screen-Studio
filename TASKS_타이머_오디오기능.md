@@ -52,21 +52,21 @@
 - [v] 도움말 아이콘: "브라우저 공유 대화상자에서 오디오 공유를 선택해야 합니다." 툴팁
 
 ### 2.2 스트림 획득 로직
-- [ ] 함수 분리: `async createDisplayStream({ audio })`
-- [ ] 기존 startRecording 내 `getDisplayMedia` 호출을 함수 사용하도록 대체
-- [ ] 오디오 불가 시(트랙 0) 사용자 안내 + 체크박스 해제 처리
+- [v ] 함수 분리: `async createDisplayStream({ audio })`
+- [v ] 기존 startRecording 내 `getDisplayMedia` 호출을 함수 사용하도록 대체
+- [v ] 오디오 불가 시(트랙 0) 사용자 안내 + 체크박스 해제 처리
 
 ### 2.3 MediaRecorder 구성
-- [ ] 옵션 객체 추출: `const recorderOptions = { mimeType: 'video/webm' /* 확장 가능 */ }`
-- [ ] 브라우저 지원 여부 try/catch (mimeType 지원 안 되면 fallback null)
-- [ ] start 시 chunk push, stop 시 blob 생성 기존 로직 재사용
+- [v ] 옵션 객체 추출: `const recorderOptions = { mimeType: 'video/webm' /* 확장 가능 */ }`
+- [v ] 브라우저 지원 여부 try/catch (mimeType 지원 안 되면 fallback null)
+- [v ] start 시 chunk push, stop 시 blob 생성 기존 로직 재사용
 
 ### 2.4 파일 네이밍 개선
-- [ ] 오디오 포함 여부 suffix: `_av` vs `_v`
+- [v] 오디오 포함 여부 suffix: `_av` vs `_v`
 
 ### 2.5 에러 & 예외
-- [ ] 권한 거부: `notify('error','화면 또는 오디오 권한이 거부되었습니다.')`
-- [ ] 오디오 트랙 미획득 → 비디오만 녹화 fallback + 사용자 안내
+- [v ] 권한 거부: `notify('error','화면 또는 오디오 권한이 거부되었습니다.')`
+- [v ] 오디오 트랙 미획득 → 비디오만 녹화 fallback + 사용자 안내
 
 ### 2.6 테스트
 - [ ] 시스템 오디오 ON 상태에서 정상 녹음 확인

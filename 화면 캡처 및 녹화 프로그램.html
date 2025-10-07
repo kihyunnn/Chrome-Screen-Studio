@@ -1116,19 +1116,34 @@
                 emptyPreview.style.display = 'none';
                 liveBadge.classList.add('active');
 
-                const options = {
-                    mimeType: 'video/webm;codecs=vp9',
+                const recorderOptions = {
+                    mimeType: 'video/webm',
                     videoBitsPerSecond: settings.bitrate
                 };
 
-                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                    options.mimeType = 'video/webm;codecs=vp8';
-                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                        options.mimeType = 'video/webm';
+                const preferredMimeTypes = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+                const canCheckMimeSupport = typeof MediaRecorder !== 'undefined' && typeof MediaRecorder.isTypeSupported === 'function';
+                const supportedMime = canCheckMimeSupport
+                    ? preferredMimeTypes.find(type => MediaRecorder.isTypeSupported(type))
+                    : 'video/webm';
+                recorderOptions.mimeType = supportedMime ?? null;
+
+                let recorderConfig = { ...recorderOptions };
+                if (!recorderConfig.mimeType) {
+                    delete recorderConfig.mimeType;
+                }
+
+                try {
+                    mediaRecorder = new MediaRecorder(stream, recorderConfig);
+                } catch (error) {
+                    if (recorderConfig.mimeType) {
+                        delete recorderConfig.mimeType;
+                        mediaRecorder = new MediaRecorder(stream, recorderConfig);
+                    } else {
+                        throw error;
                     }
                 }
 
-                mediaRecorder = new MediaRecorder(stream, options);
                 recordedChunks = [];
 
                 mediaRecorder.ondataavailable = (event) => {
@@ -1186,7 +1201,12 @@
                 }
 
                 console.error('녹화 시작 실패:', err);
-                alert('화면 녹화를 시작할 수 없습니다.');
+                
+                if (err && err.name === 'NotAllowedError') {
+                    notify('error', '화면 또는 오디오 권한이 거부되었습니다.');
+                } else {
+                    alert('화면 녹화를 시작할 수 없습니다.');
+                }
             }
         }
 
@@ -1237,7 +1257,8 @@
         function handleRecordingStop() {
             const blob = new Blob(recordedChunks, { type: 'video/webm' });
             const url = URL.createObjectURL(blob);
-            
+
+            const preview = document.getElementById('video-preview');
             preview.src = url;
             preview.style.display = 'block';
             
@@ -1245,7 +1266,10 @@
             const duration = Math.floor((Date.now() - startTime) / 1000);
             const timestamp = new Date().toLocaleString('ko-KR');
             
-            addToList('video', url, `녹화 ${recordingCount}`, timestamp, formatTime(duration));
+            const hasAudio = stream.getAudioTracks().length > 0;
+            const suffix = hasAudio ? '_av' : '_v';
+            
+            addToList('video', url, `녹화 ${recordingCount}${suffix}`, timestamp, formatTime(duration));
         }
 
         // 스크린샷 촬영
