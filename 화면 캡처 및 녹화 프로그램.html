@@ -1764,22 +1764,55 @@
                     height: { ideal: settings.height },
                     frameRate: { ideal: fpsValue }
                 },
+                // 시스템/탭 오디오 캡처 시도 (사용자가 공유 대화상자에서 체크해야 함)
                 audio: Boolean(audio)
             };
 
-            const capturedStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-
-            if (audio) {
-                const audioTracks = capturedStream.getAudioTracks();
-                if (!audioTracks || audioTracks.length === 0) {
-                    capturedStream.getTracks().forEach(track => track.stop());
-                    const noAudioError = new Error('NO_AUDIO_TRACK');
-                    noAudioError.code = 'NO_AUDIO_TRACK';
-                    throw noAudioError;
-                }
+            let capturedStream;
+            try {
+                capturedStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+            } catch (err) {
+                console.error('화면 캡처 권한 요청 실패:', err);
+                throw err;
             }
 
-            return { stream: capturedStream, settings };
+            if (!audio) {
+                return { stream: capturedStream, settings };
+            }
+
+            // 1차: 화면/탭 오디오 트랙 존재 여부 확인
+            let displayAudioTracks = capturedStream.getAudioTracks();
+            const hasDisplayAudio = displayAudioTracks && displayAudioTracks.length > 0;
+            console.log('[DEBUG] Display stream audio tracks:', hasDisplayAudio ? displayAudioTracks.length : 0);
+
+            if (hasDisplayAudio) {
+                // 이미 오디오 트랙이 있으면 그대로 반환
+                return { stream: capturedStream, settings };
+            }
+
+            console.log('[DEBUG] No audio track from display. Trying microphone fallback...');
+            // 2차: 마이크 fallback 시도 (사용자가 기대하는 "소리"가 마이크라면 이 경로로 확보)
+            let micStream;
+            try {
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+            } catch (err) {
+                console.error('마이크 권한/획득 실패:', err);
+                // 둘 다 실패 → 기존 로직과 동일하게 에러 throw
+            }
+
+            if (micStream && micStream.getAudioTracks().length > 0) {
+                const micTrack = micStream.getAudioTracks()[0];
+                capturedStream.addTrack(micTrack);
+                console.log('[DEBUG] Microphone track added as fallback.');
+                notify('info', '화면 공유 오디오가 없어 마이크 오디오로 대체했습니다.');
+                return { stream: capturedStream, settings };
+            }
+
+            // 여기까지 왔다면 어떤 오디오 트랙도 확보 실패
+            capturedStream.getTracks().forEach(track => track.stop());
+            const noAudioError = new Error('NO_AUDIO_TRACK');
+            noAudioError.code = 'NO_AUDIO_TRACK';
+            throw noAudioError;
         }
 
         // 녹화 시작
