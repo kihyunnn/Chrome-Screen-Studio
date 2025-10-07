@@ -575,7 +575,13 @@
         let timerInterval;
         let hasRecordings = false;
 
+        // 기능 토글 플래그
+        let autoStopEnabled = false;
+        let audioEnabled = false;
+        let micMixEnabled = false;
+
         // DOM 요소
+
         const startRecordBtn = document.getElementById('startRecordBtn');
         const stopRecordBtn = document.getElementById('stopRecordBtn');
         const screenshotBtn = document.getElementById('screenshotBtn');
@@ -594,7 +600,26 @@
         const emptyPreview = document.getElementById('emptyPreview');
         const liveBadge = document.getElementById('liveBadge');
 
+        // 단순 알림 헬퍼
+        function notify(type, message) {
+            const normalizedType = (type || 'info').toLowerCase();
+            const prefix = `[NOTIFY:${normalizedType.toUpperCase()}]`;
+
+            switch (normalizedType) {
+                case 'error':
+                    console.error(prefix, message);
+                    break;
+                case 'warn':
+                case 'warning':
+                    console.warn(prefix, message);
+                    break;
+                default:
+                    console.info(prefix, message);
+            }
+        }
+
         // 화질 설정
+
         const qualitySettings = {
             '4k': { width: 3840, height: 2160, bitrate: 20000000 },
             '1080p': { width: 1920, height: 1080, bitrate: 8000000 },
@@ -633,6 +658,7 @@
                 const fps = parseInt(document.getElementById('fps').value);
                 const settings = qualitySettings[quality];
 
+                // EXT: audio - 오디오/마이크 스트림 병합 지점
                 const displayMediaOptions = {
                     video: {
                         width: { ideal: settings.width },
@@ -687,6 +713,7 @@
                 statusText.textContent = '녹화 중';
                 statusDot.classList.add('recording');
                 
+                // EXT: autoStop - 자동 종료 타이머 예약 지점
                 startTimer();
             } catch (err) {
                 console.error('녹화 시작 실패:', err);
@@ -700,6 +727,8 @@
                 mediaRecorder.stop();
                 stream.getTracks().forEach(track => track.stop());
                 
+                // EXT: audio - 추가 오디오 리소스 정리 지점
+                // EXT: autoStop - 자동 종료 타이머 해제 지점
                 // 라이브 미리보기 중지
                 livePreview.srcObject = null;
                 livePreview.style.display = 'none';
