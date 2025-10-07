@@ -495,6 +495,100 @@
             padding: 40px;
             font-size: 16px;
         }
+
+        /* 토스트 알림 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 14px 18px;
+            border-radius: 8px;
+            border: 1px solid #3a3a3a;
+            min-width: 280px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.warn {
+            border-color: #ff9800;
+            background: #2a1a0a;
+        }
+
+        .toast.info {
+            border-color: #2196f3;
+            background: #0a1a2a;
+        }
+
+        .toast-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* 남은 시간 색상 강조 */
+        .auto-stop-remain.warning {
+            color: #ff9800;
+        }
+
+        .auto-stop-remain.critical {
+            color: #ff0000;
+            animation: pulse 1s infinite;
+        }
+
+        /* 툴팁 */
+        .tooltip {
+            position: relative;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2a2a2a;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            border: 1px solid #4a4a4a;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -631,6 +725,9 @@
         </div>
     </div>
 
+    <!-- 토스트 알림 컨테이너 -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
         let mediaRecorder;
         let recordedChunks = [];
@@ -704,6 +801,32 @@
         handleAutoStopToggle();
 
 
+        // === 유틸리티 함수 ===
+
+        /**
+         * 토스트 알림 표시
+         * @param {string} type - 'info' | 'warn'
+         * @param {string} message - 표시할 메시지
+         */
+        function notify(type, message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'warn' ? '⚠️' : 'ℹ️';
+            
+            toast.innerHTML = `
+                <span class="toast-icon">${icon}</span>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
 
         // 연속 캡처 모드 변경 처리
         function handleContinuousModeChange() {
@@ -733,6 +856,9 @@
                 clearAutoStop();
                 autoStopRemainWrapper.style.display = 'none';
                 autoStopRemain.textContent = '00:00';
+                // 툴팁 제거
+                startRecordBtn.classList.remove('tooltip');
+                startRecordBtn.removeAttribute('data-tooltip');
                 return;
             }
 
@@ -742,6 +868,9 @@
                 handleAutoStopToggle();
                 return;
             }
+
+            // 툴팁 업데이트
+            updateStartButtonTooltip();
 
             if (mediaRecorder && mediaRecorder.state === 'recording') {
                 scheduleAutoStop(ms);
@@ -842,6 +971,14 @@
             const clampedMs = Math.max(0, remainingMs);
             const totalSeconds = Math.ceil(clampedMs / 1000);
             autoStopRemain.textContent = formatTime(totalSeconds);
+
+            // 색상 강조: 60초 이하 orange, 10초 이하 red
+            autoStopRemain.classList.remove('warning', 'critical');
+            if (totalSeconds <= 10) {
+                autoStopRemain.classList.add('critical');
+            } else if (totalSeconds <= 60) {
+                autoStopRemain.classList.add('warning');
+            }
         }
 
         function handleAutoStopInputChange() {
@@ -860,6 +997,9 @@
                 return;
             }
 
+            // 툴팁 업데이트
+            updateStartButtonTooltip();
+
             if (mediaRecorder && mediaRecorder.state === 'recording') {
                 scheduleAutoStop(ms);
                 autoStopRemainWrapper.style.display = 'block';
@@ -869,9 +1009,28 @@
             }
         }
 
+        /**
+         * Start 버튼 툴팁 업데이트
+         */
+        function updateStartButtonTooltip() {
+            if (!autoStopEnabled || startRecordBtn.disabled) {
+                startRecordBtn.classList.remove('tooltip');
+                startRecordBtn.removeAttribute('data-tooltip');
+                return;
+            }
+
+            const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
+            if (ms > 0) {
+                const totalSeconds = Math.floor(ms / 1000);
+                startRecordBtn.classList.add('tooltip');
+                startRecordBtn.setAttribute('data-tooltip', `자동 종료 예정: ${formatTime(totalSeconds)}`);
+            } else {
+                startRecordBtn.classList.remove('tooltip');
+                startRecordBtn.removeAttribute('data-tooltip');
+            }
+        }
+
         // 녹화 시작
-
-
         async function startRecording() {
             try {
                 const quality = document.getElementById('quality').value;
@@ -934,6 +1093,10 @@
                 statusDot.classList.add('recording');
                 
                 startTimer();
+
+                // Start 버튼 툴팁 제거
+                startRecordBtn.classList.remove('tooltip');
+                startRecordBtn.removeAttribute('data-tooltip');
 
                 if (autoStopEnabled) {
                     const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
@@ -1002,8 +1165,6 @@
                 }
         }
 
-        }
-
 
         // 녹화 완료 처리
 
@@ -1045,7 +1206,7 @@
                         
                         const format = document.getElementById('imageFormat').value;
                         const mimeType = format === 'png' ? 'image/png' : 
-                                       format === 'jpeg' ? 'image/jpeg' : 'image/webp';
+                                    format === 'jpeg' ? 'image/jpeg' : 'image/webp';
                         
                         canvas.toBlob((blob) => {
                             const url = URL.createObjectURL(blob);
@@ -1232,6 +1393,232 @@
         function closeModal() {
             imageModal.style.display = 'none';
         }
+
+        // ============================================
+        // 테스트 헬퍼 함수 (개발자 콘솔에서 사용)
+        // ============================================
+        
+        /**
+         * 자동 종료 기능 단위 테스트 실행
+         * 사용법: 브라우저 개발자 콘솔에서 `runAutoStopTests()` 실행
+         */
+        window.runAutoStopTests = function() {
+            console.group('🧪 자동 종료 기능 단위 테스트');
+            
+            let totalTests = 0;
+            let passedTests = 0;
+            let failedTests = 0;
+            
+            function assert(testName, actual, expected, shouldMatch = true) {
+                totalTests++;
+                const passed = shouldMatch 
+                    ? JSON.stringify(actual) === JSON.stringify(expected)
+                    : JSON.stringify(actual) !== JSON.stringify(expected);
+                
+                if (passed) {
+                    passedTests++;
+                    console.log(`✅ ${testName}`);
+                } else {
+                    failedTests++;
+                    console.error(`❌ ${testName}`);
+                    console.error(`   예상: ${JSON.stringify(expected)}`);
+                    console.error(`   실제: ${JSON.stringify(actual)}`);
+                }
+            }
+            
+            // 테스트 1: 정상 입력 (10분 0초)
+            const test1 = calcAutoStopMs(10, 0);
+            assert('정상 입력 (10분 0초)', 
+                { ms: test1.ms, minutes: test1.minutes, seconds: test1.seconds },
+                { ms: 600000, minutes: 10, seconds: 0 }
+            );
+            
+            // 테스트 2: 음수 입력 (분) → 0으로 clamp
+            const test2 = calcAutoStopMs(-5, 30);
+            assert('음수 입력 (분) → 0으로 clamp', 
+                { ms: test2.ms, minutes: test2.minutes, seconds: test2.seconds },
+                { ms: 30000, minutes: 0, seconds: 30 }
+            );
+            
+            // 테스트 3: 음수 입력 (초) → 0으로 clamp
+            const test3 = calcAutoStopMs(5, -10);
+            assert('음수 입력 (초) → 0으로 clamp', 
+                { ms: test3.ms, minutes: test3.minutes, seconds: test3.seconds },
+                { ms: 300000, minutes: 5, seconds: 0 }
+            );
+            
+            // 테스트 4: 둘 다 음수 → 0으로 clamp
+            const test4 = calcAutoStopMs(-5, -30);
+            assert('둘 다 음수 → 0으로 clamp', 
+                { ms: test4.ms, minutes: test4.minutes, seconds: test4.seconds },
+                { ms: 0, minutes: 0, seconds: 0 }
+            );
+            
+            // 테스트 5: 0초 입력
+            const test5 = calcAutoStopMs(0, 0);
+            assert('0초 입력', 
+                { ms: test5.ms, minutes: test5.minutes, seconds: test5.seconds },
+                { ms: 0, minutes: 0, seconds: 0 }
+            );
+            
+            // 테스트 6: 180분 (최대값)
+            const test6 = calcAutoStopMs(180, 0);
+            assert('180분 (최대값)', 
+                { ms: test6.ms, minutes: test6.minutes, seconds: test6.seconds },
+                { ms: 10800000, minutes: 180, seconds: 0 }
+            );
+            
+            // 테스트 7: 180분 초과 → 180분으로 clamp
+            const test7 = calcAutoStopMs(200, 0);
+            assert('180분 초과 → 180분으로 clamp', 
+                { ms: test7.ms, minutes: test7.minutes, seconds: test7.seconds },
+                { ms: 10800000, minutes: 180, seconds: 0 }
+            );
+            
+            // 테스트 8: 179분 59초 (180분 미만)
+            const test8 = calcAutoStopMs(179, 59);
+            assert('179분 59초 (180분 미만)', 
+                { ms: test8.ms, minutes: test8.minutes, seconds: test8.seconds },
+                { ms: 10799000, minutes: 179, seconds: 59 }
+            );
+            
+            // 테스트 9: 179분 61초 → 180분 1초 → 180분으로 clamp
+            const test9 = calcAutoStopMs(179, 61);
+            assert('179분 61초 → 180분으로 clamp', 
+                { ms: test9.ms, minutes: test9.minutes, seconds: test9.seconds },
+                { ms: 10800000, minutes: 180, seconds: 0 }
+            );
+            
+            // 테스트 10: 초가 60 이상 → 분으로 변환
+            const test10 = calcAutoStopMs(5, 125);
+            assert('초가 60 이상 → 분으로 변환 (5분 125초 → 7분 5초)', 
+                { ms: test10.ms, minutes: test10.minutes, seconds: test10.seconds },
+                { ms: 425000, minutes: 7, seconds: 5 }
+            );
+            
+            // 테스트 11: NaN 입력 (문자열) → 기본값 10:00
+            const test11 = calcAutoStopMs('abc', 'xyz');
+            assert('NaN 입력 → 기본값 10:00', 
+                { ms: test11.ms, minutes: test11.minutes, seconds: test11.seconds },
+                { ms: 600000, minutes: 10, seconds: 0 }
+            );
+            
+            // 테스트 12: 빈 문자열 → 기본값 10:00
+            const test12 = calcAutoStopMs('', '');
+            assert('빈 문자열 → 기본값 10:00', 
+                { ms: test12.ms, minutes: test12.minutes, seconds: test12.seconds },
+                { ms: 600000, minutes: 10, seconds: 0 }
+            );
+            
+            // 테스트 13: undefined → 기본값 10:00
+            const test13 = calcAutoStopMs(undefined, undefined);
+            assert('undefined → 기본값 10:00', 
+                { ms: test13.ms, minutes: test13.minutes, seconds: test13.seconds },
+                { ms: 600000, minutes: 10, seconds: 0 }
+            );
+            
+            // 테스트 14: null → 기본값 10:00
+            const test14 = calcAutoStopMs(null, null);
+            assert('null → 기본값 10:00', 
+                { ms: test14.ms, minutes: test14.minutes, seconds: test14.seconds },
+                { ms: 600000, minutes: 10, seconds: 0 }
+            );
+            
+            // 테스트 15: 소수점 입력 → 정수로 변환
+            const test15 = calcAutoStopMs(5.7, 30.9);
+            assert('소수점 입력 → 정수로 변환', 
+                { ms: test15.ms, minutes: test15.minutes, seconds: test15.seconds },
+                { ms: 330000, minutes: 5, seconds: 30 }
+            );
+            
+            // 테스트 결과 요약
+            console.groupEnd();
+            console.group('📊 테스트 결과 요약');
+            console.log(`총 테스트: ${totalTests}개`);
+            console.log(`✅ 성공: ${passedTests}개`);
+            console.log(`❌ 실패: ${failedTests}개`);
+            console.log(`성공률: ${(passedTests / totalTests * 100).toFixed(1)}%`);
+            console.groupEnd();
+            
+            if (failedTests === 0) {
+                console.log('🎉 모든 테스트가 통과했습니다!');
+            } else {
+                console.warn(`⚠️ ${failedTests}개의 테스트가 실패했습니다. 위 로그를 확인하세요.`);
+            }
+            
+            return { totalTests, passedTests, failedTests };
+        };
+        
+        /**
+         * 수동 테스트 가이드 출력
+         * 사용법: 브라우저 개발자 콘솔에서 `showManualTestGuide()` 실행
+         */
+        window.showManualTestGuide = function() {
+            console.clear();
+            console.group('📋 자동 종료 기능 수동 테스트 가이드');
+            
+            console.log('%c테스트 1: 짧은 시간 자동 종료 (5초)', 'font-weight: bold; color: #4CAF50');
+            console.log('1. "자동 종료" 체크박스 활성화');
+            console.log('2. 시간을 0분 5초로 설정');
+            console.log('3. "녹화 시작" 버튼 클릭');
+            console.log('4. 5초 후 자동으로 녹화가 중지되는지 확인');
+            console.log('5. "자동 종료 시간이 도달하여 녹화를 중지했습니다." 알림 표시 확인');
+            console.log('6. 자동 종료 체크박스가 자동으로 해제되는지 확인');
+            console.log('');
+            
+            console.log('%c테스트 2: 수동 중지 시 타임아웃 해제', 'font-weight: bold; color: #2196F3');
+            console.log('1. "자동 종료" 체크박스 활성화');
+            console.log('2. 시간을 5분 0초로 설정');
+            console.log('3. "녹화 시작" 버튼 클릭');
+            console.log('4. 2-3초 후 "녹화 중지" 버튼 클릭 (자동 종료 전에 수동 중지)');
+            console.log('5. 자동 종료 알림이 표시되지 않는지 확인');
+            console.log('6. 5분 후에도 아무 일도 일어나지 않는지 확인 (타임아웃 해제됨)');
+            console.log('');
+            
+            console.log('%c테스트 3: 남은 시간 표시 및 색상 변화', 'font-weight: bold; color: #FF9800');
+            console.log('1. "자동 종료" 체크박스 활성화');
+            console.log('2. 시간을 1분 30초로 설정');
+            console.log('3. "녹화 시작" 버튼 클릭');
+            console.log('4. 남은 시간이 실시간으로 감소하는지 확인');
+            console.log('5. 60초 이하일 때 주황색(orange)으로 변경되는지 확인');
+            console.log('6. 10초 이하일 때 빨간색(red) + 깜빡임 효과 확인');
+            console.log('');
+            
+            console.log('%c테스트 4: Start 버튼 툴팁', 'font-weight: bold; color: #9C27B0');
+            console.log('1. "자동 종료" 체크박스 활성화');
+            console.log('2. 시간을 3분 30초로 설정');
+            console.log('3. "녹화 시작" 버튼에 마우스 올리기');
+            console.log('4. "자동 종료 예정: 03:30" 툴팁이 표시되는지 확인');
+            console.log('5. 시간을 변경하고 다시 마우스 올려서 툴팁이 업데이트되는지 확인');
+            console.log('6. 녹화 시작 후 툴팁이 사라지는지 확인');
+            console.log('');
+            
+            console.log('%c테스트 5: 회귀 테스트 (기존 기능 정상 작동)', 'font-weight: bold; color: #F44336');
+            console.log('1. "자동 종료" 체크박스 비활성화');
+            console.log('2. 일반 녹화 시작 및 수동 중지 → 정상 작동 확인');
+            console.log('3. 스크린샷 촬영 → 정상 작동 확인');
+            console.log('4. 연속 캡처 모드 → 정상 작동 확인');
+            console.log('5. 다운로드 기능 → 정상 작동 확인');
+            console.log('');
+            
+            console.log('%c테스트 6: 입력 검증', 'font-weight: bold; color: #607D8B');
+            console.log('1. "자동 종료" 체크박스 활성화');
+            console.log('2. 시간을 0분 0초로 설정 → 경고 알림 확인, 체크박스 자동 해제 확인');
+            console.log('3. 체크박스 다시 활성화, 시간을 200분 0초로 설정 → 180분으로 자동 조정 확인');
+            console.log('4. 시간을 5분 90초로 설정 → 6분 30초로 자동 조정 확인');
+            console.log('5. 빈 값 입력 → 10분 0초 기본값 설정 확인');
+            console.log('');
+            
+            console.groupEnd();
+            console.log('%c💡 팁: 각 테스트 후 결과를 체크리스트에 기록하세요!', 'color: #03A9F4; font-style: italic');
+        };
+        
+        // 콘솔에 사용 가능한 테스트 명령어 안내
+        console.log('%c🧪 자동 종료 기능 테스트 도구가 로드되었습니다!', 'font-weight: bold; font-size: 14px; color: #4CAF50');
+        console.log('%c사용 가능한 명령어:', 'font-weight: bold; color: #2196F3');
+        console.log('  - runAutoStopTests()      : 단위 테스트 실행');
+        console.log('  - showManualTestGuide()   : 수동 테스트 가이드 보기');
+        console.log('');
     </script>
 </body>
 </html>

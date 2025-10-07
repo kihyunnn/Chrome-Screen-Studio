@@ -2,13 +2,13 @@
 
 상위 문서: `PRD_화면녹화도구.md`
 대상 코드: 단일 HTML 파일(현행 구조 유지, 점진적 리팩터 고려)
-우선순위: 타이머 → 오디오(기본) → 오디오 + 마이크 믹싱(선택) → 추가 UX 다듬기
+우선순위: 타이머 → 오디오(시스템/탭) → 추가 UX 다듬기
 
 ---
 ## 0. 공통 사전 준비
 - [v] (공통) 기존 전역 변수 목록 재확인 및 중복/이름 충돌 위험 표 작성
 - [ ] (공통) `startRecording`, `stopRecording` 함수 내부 훅 포인트 주석 추가 (// EXT: autoStop, // EXT: audio)
-- [ ] (공통) 새 기능 토글 시나리오 플래그 정의 (autoStopEnabled, audioEnabled, micMixEnabled)
+- [ ] (공통) 새 기능 토글 시나리오 플래그 정의 (autoStopEnabled, audioEnabled)
 - [ ] (공통) 에러 메시지 표준 함수 `notify(type, message)` 초안 작성 (console wrapper)
 
 ---
@@ -35,9 +35,9 @@
 - [v ] 180분 초과 → 180분으로 강제 및 안내
 
 ### 1.4 UX 마감
-- [ ] 자동 종료 예약 시 Start 버튼 hover 툴팁: "자동 종료 예정: MM:SS"
-- [ ] 종료 시 알림: `notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.')`
-- [ ] 남은 시간 60초 이하 색상 강조 (orange → 10초 이하 red)
+- [v ] 자동 종료 예약 시 Start 버튼 hover 툴팁: "자동 종료 예정: MM:SS"
+- [v ] 종료 시 알림: `notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.')`
+- [v ] 남은 시간 60초 이하 색상 강조 (orange → 10초 이하 red)
 
 ### 1.5 테스트
 - [ ] 단위: `calcAutoStopMs` 경계 (음수, 0, 180분 초과)
@@ -49,7 +49,6 @@
 ## 2. 오디오 녹화(시스템/탭 오디오)
 ### 2.1 UI 작업
 - [ ] 체크박스: "오디오 포함" (`id=recordAudio`)
-- [ ] (선택) 서브 체크박스: "마이크 포함" (`id=recordMic`) 초기 비활성
 - [ ] 도움말 아이콘: "브라우저 공유 대화상자에서 오디오 공유를 선택해야 합니다." 툴팁
 
 ### 2.2 스트림 획득 로직
@@ -57,32 +56,22 @@
 - [ ] 기존 startRecording 내 `getDisplayMedia` 호출을 함수 사용하도록 대체
 - [ ] 오디오 불가 시(트랙 0) 사용자 안내 + 체크박스 해제 처리
 
-### 2.3 마이크 믹싱 (선택 기능 - 2단계)
-- [ ] 조건: recordAudio && recordMic
-- [ ] `getUserMedia({ audio: true })` 예외 처리 (권한 거부 등)
-- [ ] `AudioContext` + `createMediaStreamDestination` 구축
-- [ ] 시스템(또는 탭) 오디오 트랙 존재 시 연결, 마이크 트랙 연결
-- [ ] 최종 스트림: 비디오 1 + 믹싱된 오디오 n
-
-### 2.4 MediaRecorder 구성
+### 2.3 MediaRecorder 구성
 - [ ] 옵션 객체 추출: `const recorderOptions = { mimeType: 'video/webm' /* 확장 가능 */ }`
 - [ ] 브라우저 지원 여부 try/catch (mimeType 지원 안 되면 fallback null)
 - [ ] start 시 chunk push, stop 시 blob 생성 기존 로직 재사용
 
-### 2.5 파일 네이밍 개선
+### 2.4 파일 네이밍 개선
 - [ ] 오디오 포함 여부 suffix: `_av` vs `_v`
-- [ ] 마이크 포함 시 `_avm` 추가
 
-### 2.6 에러 & 예외
+### 2.5 에러 & 예외
 - [ ] 권한 거부: `notify('error','화면 또는 오디오 권한이 거부되었습니다.')`
-- [ ] 마이크만 허용/시스템 오디오 미선택 → 마이크 단독 녹음 허용 (표시 `_mic`)
-- [ ] 오디오 혼합 실패 → 비디오만 녹화 fallback + 노티
+- [ ] 오디오 트랙 미획득 → 비디오만 녹화 fallback + 사용자 안내
 
-### 2.7 테스트
-- [ ] 시스템 오디오 ON + 마이크 OFF 시 정상
-- [ ] 시스템 오디오 OFF + 마이크 ON → 마이크만 녹음되는지
-- [ ] 둘 다 ON → 두 소스 섞여 한 트랙으로 들어오는지 (볼륨/레이턴시 수동 체크)
+### 2.6 테스트
+- [ ] 시스템 오디오 ON 상태에서 정상 녹음 확인
 - [ ] 오디오 OFF → 기존과 동일 파일 크기/메타 확인
+- [ ] 오디오 ON인데 트랙 미획득 시 fallback 동작 확인
 
 ---
 ## 3. 공통 코드 정리 (선택: 타이머/오디오 뒤)
@@ -98,7 +87,6 @@
 | 오디오 미지원 | 일부 브라우저/OS 시스템 오디오 불가 | 체크박스 자동 비활성 + tooltip |
 | 긴 녹화 메모리 | chunks 배열 증가 | 즉시 flush(Blob URL 기록 후 clear) |
 | 타이머 중복 | 재시작 시 clear 누락 | `clearAutoStop()` 일관 호출 |
-| 마이크 echo | 시스템 + 마이크 동시 녹음 시 중복음 | 사용자 가이드에 헤드셋 권장 |
 | OCR 이후 확장 | CPU 점유 증가 | 모듈식 enable 플래그 유지 |
 
 ---
@@ -106,18 +94,17 @@
 1. (1.1~1.2) 타이머 UI + 로직 기본
 2. (1.3~1.4) 예외/UX 마감 + 테스트
 3. (2.1~2.2) 오디오 옵션 단일(시스템/탭) 녹음
-4. (2.4~2.5) MediaRecorder 옵션/네이밍 정리
-5. (2.6~2.7) 예외 + 테스트
-6. (2.3) 마이크 믹싱 (선택) → 문제 없으면 default off
-7. (3) 공통 리팩터 (필요 범위만)
+4. (2.3~2.4) MediaRecorder 옵션/네이밍 정리
+5. (2.5~2.6) 예외 + 테스트
+6. (3) 공통 리팩터 (필요 범위만)
 
 ---
 ## 6. 산출물 정의
 | 항목 | 설명 |
 |------|------|
 | 수정된 HTML | 추가 UI + script 변경 |
-| 기능 플래그 | autoStopEnabled, recordAudio, recordMic |
-| 신규 함수 | `calcAutoStopMs`, `scheduleAutoStop`, `clearAutoStop`, `createDisplayStream`, (선택)`mixAudioStreams` |
+| 기능 플래그 | autoStopEnabled, recordAudio |
+| 신규 함수 | `calcAutoStopMs`, `scheduleAutoStop`, `clearAutoStop`, `createDisplayStream` |
 | 로그/알림 | `notify(type,msg)` 단순 구현 |
 | 테스트 체크리스트 | TASKS 문서 내 유지 |
 
@@ -127,7 +114,6 @@
 |------|-----|
 | 자동 종료 | 입력 검증 + 예약/취소 + 로그 + 남은 시간 표시 선택적 |
 | 오디오 녹음 | 오디오 ON/OFF 토글, 오디오 트랙 존재 여부 안내, 파일명 suffix 구분 |
-| 마이크 믹싱 | 두 소스 동시에 녹음, 실패 시 fallback |
 | 회귀 | 기존 스크린샷/연속 캡처 기능 정상 |
 | 문서 | PRD 반영 + TASKS 문서 최신화 |
 
