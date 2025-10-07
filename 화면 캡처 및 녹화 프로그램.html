@@ -149,12 +149,38 @@
             font-size: 16px;
         }
 
-        .control-buttons {
+        .setting-row {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: auto;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
         }
+
+        .setting-row .checkbox-label {
+            margin-bottom: 0;
+        }
+
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 1px solid #4a4a4a;
+            background: #1a1a1a;
+            color: #ffffff;
+            font-size: 13px;
+            cursor: help;
+        }
+ 
+         .control-buttons {
+             display: flex;
+             flex-direction: column;
+             gap: 12px;
+             margin-top: auto;
+         }
+
 
         button {
             padding: 14px;
@@ -616,9 +642,19 @@
                         <option value="24">24 FPS</option>
                     </select>
                 </div>
+                <div class="setting-group">
+                    <div class="setting-row">
+                        <label class="checkbox-label" for="recordAudio">
+                            <input type="checkbox" id="recordAudio">
+                            오디오 포함
+                        </label>
+                        <span class="tooltip help-icon" data-tooltip="브라우저 공유 대화상자에서 오디오 공유를 선택해야 합니다." aria-label="브라우저 공유 대화상자에서 오디오 공유를 선택해야 합니다.">?</span>
+                    </div>
+                </div>
             </div>
-
+ 
             <!-- 자동 종료 설정 -->
+
             <div class="section" id="autoStopSection">
                 <div class="section-title">자동 종료</div>
                 <div class="setting-group">
