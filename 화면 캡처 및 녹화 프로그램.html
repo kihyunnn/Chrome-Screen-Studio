@@ -100,6 +100,14 @@
             color: #ffffff;
         }
 
+        .auto-stop-inactive {
+            opacity: 0.6;
+        }
+
+        .auto-stop-inactive input[type="number"] {
+            background: #050505;
+        }
+
         label {
 
             display: block;
@@ -634,11 +642,14 @@
         let continuousInterval;
         let timerInterval;
         let hasRecordings = false;
+        let autoStopTimeoutId = null;
+        let autoStopDeadline = null;
 
         // 기능 토글 플래그
         let autoStopEnabled = false;
         let audioEnabled = false;
         let micMixEnabled = false;
+
 
         // DOM 요소
 
@@ -659,6 +670,7 @@
         const modalImage = document.getElementById('modalImage');
         const emptyPreview = document.getElementById('emptyPreview');
         const liveBadge = document.getElementById('liveBadge');
+        const autoStopSection = document.getElementById('autoStopSection');
         const autoStopCheckbox = document.getElementById('autoStopEnabled');
         const autoStopMinutesInput = document.getElementById('autoStopMinutes');
         const autoStopSecondsInput = document.getElementById('autoStopSeconds');
@@ -683,9 +695,14 @@
         screenshotPreview.addEventListener('click', openModal);
         imageModal.addEventListener('click', closeModal);
         autoStopCheckbox.addEventListener('change', handleAutoStopToggle);
+        autoStopMinutesInput.addEventListener('change', handleAutoStopInputChange);
+        autoStopSecondsInput.addEventListener('change', handleAutoStopInputChange);
+        autoStopMinutesInput.addEventListener('blur', handleAutoStopInputChange);
+        autoStopSecondsInput.addEventListener('blur', handleAutoStopInputChange);
 
         // 초기 UI 상태
         handleAutoStopToggle();
+
 
 
         // 연속 캡처 모드 변경 처리
@@ -706,15 +723,116 @@
 
         function handleAutoStopToggle() {
             autoStopEnabled = autoStopCheckbox.checked;
-            autoStopMinutesInput.disabled = !autoStopEnabled;
-            autoStopSecondsInput.disabled = !autoStopEnabled;
+            autoStopSection.classList.toggle('auto-stop-inactive', !autoStopEnabled);
+
+            const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
+            autoStopMinutesInput.value = String(minutes);
+            autoStopSecondsInput.value = String(seconds);
 
             if (!autoStopEnabled) {
+                clearAutoStop();
+                autoStopRemainWrapper.style.display = 'none';
+                autoStopRemain.textContent = '00:00';
+                return;
+            }
+
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                if (ms > 0) {
+                    scheduleAutoStop(ms);
+                    autoStopRemainWrapper.style.display = 'block';
+                    updateAutoStopRemain(ms);
+                } else {
+                    clearAutoStop();
+                    autoStopRemainWrapper.style.display = 'none';
+                    notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 비활성화되었습니다.');
+                }
+            } else {
+                autoStopRemainWrapper.style.display = 'none';
+            }
+        }
+
+
+        function calcAutoStopMs(minutes, seconds) {
+            let m = parseInt(minutes, 10);
+            let s = parseInt(seconds, 10);
+
+            if (Number.isNaN(m)) m = 0;
+            if (Number.isNaN(s)) s = 0;
+
+            m = Math.min(Math.max(m, 0), 180);
+            s = Math.min(Math.max(s, 0), 59);
+
+            let totalSeconds = m * 60 + s;
+            const maxSeconds = 180 * 60;
+            if (totalSeconds > maxSeconds) {
+                totalSeconds = maxSeconds;
+            }
+
+            const normalizedMinutes = Math.floor(totalSeconds / 60);
+            const normalizedSeconds = totalSeconds % 60;
+
+            return {
+                ms: totalSeconds * 1000,
+                minutes: normalizedMinutes,
+                seconds: normalizedSeconds
+            };
+        }
+
+        function scheduleAutoStop(durationMs) {
+            clearAutoStop();
+            if (!durationMs || durationMs <= 0) {
+                return;
+            }
+
+            autoStopDeadline = Date.now() + durationMs;
+            autoStopTimeoutId = setTimeout(() => {
+                autoStopTimeoutId = null;
+                autoStopDeadline = null;
+                stopRecording({ reason: 'AUTO_STOP' });
+            }, durationMs);
+        }
+
+
+        function clearAutoStop() {
+            if (autoStopTimeoutId) {
+                clearTimeout(autoStopTimeoutId);
+                autoStopTimeoutId = null;
+            }
+            autoStopDeadline = null;
+        }
+
+        function updateAutoStopRemain(remainingMs) {
+            const clampedMs = Math.max(0, remainingMs);
+            const totalSeconds = Math.ceil(clampedMs / 1000);
+            autoStopRemain.textContent = formatTime(totalSeconds);
+        }
+
+        function handleAutoStopInputChange() {
+            const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
+            autoStopMinutesInput.value = String(minutes);
+            autoStopSecondsInput.value = String(seconds);
+
+            if (!autoStopEnabled) {
+                return;
+            }
+
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                if (ms > 0) {
+                    scheduleAutoStop(ms);
+                    autoStopRemainWrapper.style.display = 'block';
+                    updateAutoStopRemain(ms);
+                } else {
+                    clearAutoStop();
+                    autoStopRemainWrapper.style.display = 'none';
+                    notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 취소되었습니다.');
+                }
+            } else {
                 autoStopRemainWrapper.style.display = 'none';
             }
         }
 
         // 녹화 시작
+
 
         async function startRecording() {
             try {
@@ -777,8 +895,28 @@
                 statusText.textContent = '녹화 중';
                 statusDot.classList.add('recording');
                 
-                // EXT: autoStop - 자동 종료 타이머 예약 지점
                 startTimer();
+
+                if (autoStopEnabled) {
+                    const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
+                    autoStopMinutesInput.value = String(minutes);
+                    autoStopSecondsInput.value = String(seconds);
+
+
+                    if (ms > 0) {
+                        scheduleAutoStop(ms);
+                        autoStopRemainWrapper.style.display = 'block';
+                        updateAutoStopRemain(ms);
+                    } else {
+                        clearAutoStop();
+                        autoStopRemainWrapper.style.display = 'none';
+                        notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 취소되었습니다.');
+                    }
+
+                } else {
+                    clearAutoStop();
+                    autoStopRemainWrapper.style.display = 'none';
+                }
             } catch (err) {
                 console.error('녹화 시작 실패:', err);
                 alert('화면 녹화를 시작할 수 없습니다.');
@@ -786,28 +924,47 @@
         }
 
         // 녹화 중지
-        function stopRecording() {
+
+        function stopRecording(param = {}) {
+            const options = param instanceof Event ? {} : param;
+            const { reason } = options;
+            let wasRecording = false;
+
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                wasRecording = true;
                 mediaRecorder.stop();
+            }
+
+            if (stream) {
                 stream.getTracks().forEach(track => track.stop());
-                
-                // EXT: audio - 추가 오디오 리소스 정리 지점
-                // EXT: autoStop - 자동 종료 타이머 해제 지점
-                // 라이브 미리보기 중지
-                livePreview.srcObject = null;
-                livePreview.style.display = 'none';
-                liveBadge.classList.remove('active');
-                
-                startRecordBtn.disabled = false;
-                stopRecordBtn.disabled = true;
-                statusText.textContent = '대기 중';
-                statusDot.classList.remove('recording');
-                clearInterval(timerInterval);
-                timer.textContent = '00:00';
+                stream = null;
+            }
+            
+            // 라이브 미리보기 중지
+            livePreview.srcObject = null;
+            livePreview.style.display = 'none';
+            liveBadge.classList.remove('active');
+            
+            startRecordBtn.disabled = false;
+            stopRecordBtn.disabled = true;
+            statusText.textContent = '대기 중';
+            statusDot.classList.remove('recording');
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timer.textContent = '00:00';
+
+            clearAutoStop();
+            autoStopRemainWrapper.style.display = 'none';
+            autoStopRemain.textContent = formatTime(0);
+
+            if (reason === 'AUTO_STOP' && wasRecording) {
+                notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
             }
         }
 
+
         // 녹화 완료 처리
+
         function handleRecordingStop() {
             const blob = new Blob(recordedChunks, { type: 'video/webm' });
             const url = URL.createObjectURL(blob);
@@ -890,7 +1047,7 @@
                     
                     const format = document.getElementById('imageFormat').value;
                     const mimeType = format === 'png' ? 'image/png' : 
-                                   format === 'jpeg' ? 'image/jpeg' : 'image/webp';
+                                     format === 'jpeg' ? 'image/jpeg' : 'image/webp';
                     
                     canvas.toBlob((blob) => {
                         const url = URL.createObjectURL(blob);
@@ -989,11 +1146,30 @@
 
         // 타이머 시작
         function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+
             timerInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - startTime) / 1000);
                 timer.textContent = formatTime(elapsed);
+
+                if (autoStopEnabled && autoStopDeadline) {
+                    const remainingMs = autoStopDeadline - Date.now();
+                    autoStopRemainWrapper.style.display = 'block';
+                    updateAutoStopRemain(remainingMs);
+
+                    if (remainingMs <= 0) {
+                        clearAutoStop();
+                        if (mediaRecorder && mediaRecorder.state === 'recording') {
+                            stopRecording({ reason: 'AUTO_STOP' });
+                        }
+                    }
+                }
             }, 1000);
         }
+
+
 
         // 시간 포맷
         function formatTime(seconds) {

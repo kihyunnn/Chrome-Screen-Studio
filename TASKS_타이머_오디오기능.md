@@ -21,13 +21,13 @@
 - [v] 남은 시간 표시 영역(선택) `id=autoStopRemain` (녹화 중 활성)
 
 ### 1.2 상태 & 로직
-- [ ] 상태 필드: `autoStopTimeoutId` 추가
-- [ ] util 함수: `calcAutoStopMs(m, s)` (입력 검증 + clamping)
-- [ ] schedule 함수: `scheduleAutoStop(ms)` 구현 (기존 예약 있으면 clear)
-- [ ] clear 함수: `clearAutoStop()` 구현
-- [ ] 통합: `startRecording` 끝부분에서 autoStopEnabled 체크 후 `scheduleAutoStop`
-- [ ] 통합: `stopRecording`에서 `clearAutoStop()` 호출
-- [ ] 남은 시간 tick: 기존 녹화 타이머 interval 내부에서 (if autoStop) 남은 ms 계산 후 표시
+- [v ] 상태 필드: `autoStopTimeoutId` 추가
+- [v ] util 함수: `calcAutoStopMs(m, s)` (입력 검증 + clamping)
+- [v ] schedule 함수: `scheduleAutoStop(ms)` 구현 (기존 예약 있으면 clear)
+- [v] clear 함수: `clearAutoStop()` 구현
+- [v] 통합: `startRecording` 끝부분에서 autoStopEnabled 체크 후 `scheduleAutoStop`
+- [v] 통합: `stopRecording`에서 `clearAutoStop()` 호출
+- [v] 남은 시간 tick: 기존 녹화 타이머 interval 내부에서 (if autoStop) 남은 ms 계산 후 표시
 
 ### 1.3 예외 & 에러 처리
 - [ ] 입력 NaN/빈값 → 기본값 10:00 재설정 + 안내
