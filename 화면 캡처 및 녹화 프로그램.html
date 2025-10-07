@@ -72,7 +72,36 @@
             margin-bottom: 0;
         }
 
+        .auto-stop-time {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .auto-stop-time .time-input {
+            flex: 1;
+        }
+
+        .time-separator {
+            color: #ffffff;
+            font-size: 18px;
+            padding: 0 4px;
+        }
+
+        .helper-text {
+            color: #808080;
+            font-size: 13px;
+        }
+
+        .auto-stop-remain {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
         label {
+
             display: block;
             margin-bottom: 8px;
             font-size: 16px;
@@ -487,7 +516,38 @@
                 </div>
             </div>
 
+            <!-- 자동 종료 설정 -->
+            <div class="section" id="autoStopSection">
+                <div class="section-title">자동 종료</div>
+                <div class="setting-group">
+                    <label class="checkbox-label" for="autoStopEnabled">
+                        <input type="checkbox" id="autoStopEnabled">
+                        자동 종료 활성화
+                    </label>
+                </div>
+                <div class="setting-group">
+                    <label>자동 종료 시간</label>
+                    <div class="auto-stop-time">
+                        <div class="time-input">
+                            <input type="number" id="autoStopMinutes" min="0" max="180" value="10" placeholder="분">
+                        </div>
+                        <span class="time-separator">:</span>
+                        <div class="time-input">
+                            <input type="number" id="autoStopSeconds" min="0" max="59" value="0" placeholder="초">
+                        </div>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <small class="helper-text">최대 180분까지 설정 가능하며 0 이하 입력 시 자동 종료는 해제됩니다.</small>
+                </div>
+                <div class="setting-group" id="autoStopRemainWrapper" style="display: none;">
+                    <label>남은 시간</label>
+                    <div id="autoStopRemain" class="auto-stop-remain">10:00</div>
+                </div>
+            </div>
+
             <!-- 스크린샷 설정 -->
+
             <div class="section">
                 <div class="section-title">스크린샷 설정</div>
                 <div class="setting-group">
@@ -599,26 +659,14 @@
         const modalImage = document.getElementById('modalImage');
         const emptyPreview = document.getElementById('emptyPreview');
         const liveBadge = document.getElementById('liveBadge');
-
-        // 단순 알림 헬퍼
-        function notify(type, message) {
-            const normalizedType = (type || 'info').toLowerCase();
-            const prefix = `[NOTIFY:${normalizedType.toUpperCase()}]`;
-
-            switch (normalizedType) {
-                case 'error':
-                    console.error(prefix, message);
-                    break;
-                case 'warn':
-                case 'warning':
-                    console.warn(prefix, message);
-                    break;
-                default:
-                    console.info(prefix, message);
-            }
-        }
+        const autoStopCheckbox = document.getElementById('autoStopEnabled');
+        const autoStopMinutesInput = document.getElementById('autoStopMinutes');
+        const autoStopSecondsInput = document.getElementById('autoStopSeconds');
+        const autoStopRemainWrapper = document.getElementById('autoStopRemainWrapper');
+        const autoStopRemain = document.getElementById('autoStopRemain');
 
         // 화질 설정
+
 
         const qualitySettings = {
             '4k': { width: 3840, height: 2160, bitrate: 20000000 },
@@ -634,6 +682,11 @@
         continuousMode.addEventListener('change', handleContinuousModeChange);
         screenshotPreview.addEventListener('click', openModal);
         imageModal.addEventListener('click', closeModal);
+        autoStopCheckbox.addEventListener('change', handleAutoStopToggle);
+
+        // 초기 UI 상태
+        handleAutoStopToggle();
+
 
         // 연속 캡처 모드 변경 처리
         function handleContinuousModeChange() {
@@ -651,7 +704,18 @@
             }
         }
 
+        function handleAutoStopToggle() {
+            autoStopEnabled = autoStopCheckbox.checked;
+            autoStopMinutesInput.disabled = !autoStopEnabled;
+            autoStopSecondsInput.disabled = !autoStopEnabled;
+
+            if (!autoStopEnabled) {
+                autoStopRemainWrapper.style.display = 'none';
+            }
+        }
+
         // 녹화 시작
+
         async function startRecording() {
             try {
                 const quality = document.getElementById('quality').value;

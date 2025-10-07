@@ -14,11 +14,11 @@
 ---
 ## 1. 타이머 기반 자동 녹화 종료 (고정 시간 방식)
 ### 1.1 UI 작업
-- [ ] 설정 패널 섹션 삽입 위치 결정 (품질/FPS 아래)
-- [ ] 체크박스: "자동 종료" (`id=autoStopEnabled`)
-- [ ] 시간 입력: 분(`id=autoStopMinutes`), 초(`id=autoStopSeconds`), 기본 10:00
-- [ ] 유효성 안내 텍스트(최대 180분, 음수 불가)
-- [ ] 남은 시간 표시 영역(선택) `id=autoStopRemain` (녹화 중 활성)
+- [v] 설정 패널 섹션 삽입 위치 결정 (품질/FPS 아래)
+- [v ] 체크박스: "자동 종료" (`id=autoStopEnabled`)
+- [v] 시간 입력: 분(`id=autoStopMinutes`), 초(`id=autoStopSeconds`), 기본 10:00
+- [v ] 유효성 안내 텍스트(최대 180분, 음수 불가)
+- [v] 남은 시간 표시 영역(선택) `id=autoStopRemain` (녹화 중 활성)
 
 ### 1.2 상태 & 로직
 - [ ] 상태 필드: `autoStopTimeoutId` 추가
