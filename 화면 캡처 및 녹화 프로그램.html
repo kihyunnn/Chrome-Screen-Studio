@@ -736,16 +736,17 @@
                 return;
             }
 
+            if (ms <= 0) {
+                notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 취소되었습니다.');
+                autoStopCheckbox.checked = false;
+                handleAutoStopToggle();
+                return;
+            }
+
             if (mediaRecorder && mediaRecorder.state === 'recording') {
-                if (ms > 0) {
-                    scheduleAutoStop(ms);
-                    autoStopRemainWrapper.style.display = 'block';
-                    updateAutoStopRemain(ms);
-                } else {
-                    clearAutoStop();
-                    autoStopRemainWrapper.style.display = 'none';
-                    notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 비활성화되었습니다.');
-                }
+                scheduleAutoStop(ms);
+                autoStopRemainWrapper.style.display = 'block';
+                updateAutoStopRemain(ms);
             } else {
                 autoStopRemainWrapper.style.display = 'none';
             }
@@ -756,20 +757,55 @@
             let m = parseInt(minutes, 10);
             let s = parseInt(seconds, 10);
 
-            if (Number.isNaN(m)) m = 0;
-            if (Number.isNaN(s)) s = 0;
+            const originalM = m;
+            const originalS = s;
 
-            m = Math.min(Math.max(m, 0), 180);
-            s = Math.min(Math.max(s, 0), 59);
+            let clampedFromNaN = false;
+            let clampedToMax = false;
+            let clampedSeconds = false;
+
+            if (Number.isNaN(m)) {
+                clampedFromNaN = true;
+                m = 10;
+            }
+            if (Number.isNaN(s)) {
+                clampedFromNaN = true;
+                s = 0;
+            }
+
+            m = Math.max(m, 0);
+            s = Math.max(s, 0);
+
+            if (s > 59) {
+                const extraMinutes = Math.floor(s / 60);
+                m += extraMinutes;
+                s = s % 60;
+                clampedSeconds = true;
+            }
+
+            const maxMinutes = 180;
+            const maxSecondsTotal = maxMinutes * 60;
 
             let totalSeconds = m * 60 + s;
-            const maxSeconds = 180 * 60;
-            if (totalSeconds > maxSeconds) {
-                totalSeconds = maxSeconds;
+            if (totalSeconds > maxSecondsTotal) {
+                totalSeconds = maxSecondsTotal;
+                clampedToMax = true;
+            }
+
+            if (totalSeconds < 0) {
+                totalSeconds = 0;
             }
 
             const normalizedMinutes = Math.floor(totalSeconds / 60);
             const normalizedSeconds = totalSeconds % 60;
+
+            if (clampedFromNaN) {
+                notify('warn', '자동 종료 시간이 비어 있거나 잘못 입력되어 기본값 10분으로 변경했습니다.');
+            } else if (clampedToMax) {
+                notify('warn', '자동 종료는 최대 180분까지 가능합니다. 180분으로 설정했습니다.');
+            } else if (clampedSeconds) {
+                notify('info', '초 단위 입력이 59초를 초과해 분·초로 조정했습니다.');
+            }
 
             return {
                 ms: totalSeconds * 1000,
@@ -777,6 +813,7 @@
                 seconds: normalizedSeconds
             };
         }
+
 
         function scheduleAutoStop(durationMs) {
             clearAutoStop();
@@ -816,16 +853,17 @@
                 return;
             }
 
+            if (ms <= 0) {
+                notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 취소되었습니다.');
+                autoStopCheckbox.checked = false;
+                handleAutoStopToggle();
+                return;
+            }
+
             if (mediaRecorder && mediaRecorder.state === 'recording') {
-                if (ms > 0) {
-                    scheduleAutoStop(ms);
-                    autoStopRemainWrapper.style.display = 'block';
-                    updateAutoStopRemain(ms);
-                } else {
-                    clearAutoStop();
-                    autoStopRemainWrapper.style.display = 'none';
-                    notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 취소되었습니다.');
-                }
+                scheduleAutoStop(ms);
+                autoStopRemainWrapper.style.display = 'block';
+                updateAutoStopRemain(ms);
             } else {
                 autoStopRemainWrapper.style.display = 'none';
             }
@@ -908,9 +946,9 @@
                         autoStopRemainWrapper.style.display = 'block';
                         updateAutoStopRemain(ms);
                     } else {
-                        clearAutoStop();
-                        autoStopRemainWrapper.style.display = 'none';
                         notify('warn', '자동 종료 시간이 0초로 설정되어 자동 종료가 취소되었습니다.');
+                        autoStopCheckbox.checked = false;
+                        handleAutoStopToggle();
                     }
 
                 } else {
@@ -954,12 +992,16 @@
             timer.textContent = '00:00';
 
             clearAutoStop();
-            autoStopRemainWrapper.style.display = 'none';
-            autoStopRemain.textContent = formatTime(0);
+                autoStopRemainWrapper.style.display = 'none';
+                autoStopRemain.textContent = '00:00';
 
-            if (reason === 'AUTO_STOP' && wasRecording) {
-                notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
-            }
+                if (reason === 'AUTO_STOP' && wasRecording) {
+                    notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
+                    autoStopCheckbox.checked = false;
+                    handleAutoStopToggle();
+                }
+        }
+
         }
 
 
