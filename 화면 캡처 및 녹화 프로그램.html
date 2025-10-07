@@ -809,6 +809,7 @@
         const autoStopSecondsInput = document.getElementById('autoStopSeconds');
         const autoStopRemainWrapper = document.getElementById('autoStopRemainWrapper');
         const autoStopRemain = document.getElementById('autoStopRemain');
+        const recordAudioCheckbox = document.getElementById('recordAudio');
 
         // 화질 설정
 
@@ -832,9 +833,11 @@
         autoStopSecondsInput.addEventListener('change', handleAutoStopInputChange);
         autoStopMinutesInput.addEventListener('blur', handleAutoStopInputChange);
         autoStopSecondsInput.addEventListener('blur', handleAutoStopInputChange);
+        recordAudioCheckbox.addEventListener('change', handleAudioToggle);
 
         // 초기 UI 상태
         handleAutoStopToggle();
+        handleAudioToggle();
 
 
         // === 유틸리티 함수 ===
@@ -915,6 +918,10 @@
             } else {
                 autoStopRemainWrapper.style.display = 'none';
             }
+        }
+
+        function handleAudioToggle() {
+            audioEnabled = recordAudioCheckbox.checked;
         }
 
 
@@ -1066,24 +1073,40 @@
             }
         }
 
+        async function createDisplayStream({ audio }) {
+            const quality = document.getElementById('quality').value;
+            const fpsValue = parseInt(document.getElementById('fps').value, 10);
+            const settings = qualitySettings[quality];
+
+            const displayMediaOptions = {
+                video: {
+                    width: { ideal: settings.width },
+                    height: { ideal: settings.height },
+                    frameRate: { ideal: fpsValue }
+                },
+                audio: Boolean(audio)
+            };
+
+            const capturedStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+
+            if (audio) {
+                const audioTracks = capturedStream.getAudioTracks();
+                if (!audioTracks || audioTracks.length === 0) {
+                    capturedStream.getTracks().forEach(track => track.stop());
+                    const noAudioError = new Error('NO_AUDIO_TRACK');
+                    noAudioError.code = 'NO_AUDIO_TRACK';
+                    throw noAudioError;
+                }
+            }
+
+            return { stream: capturedStream, settings };
+        }
+
         // 녹화 시작
         async function startRecording() {
             try {
-                const quality = document.getElementById('quality').value;
-                const fps = parseInt(document.getElementById('fps').value);
-                const settings = qualitySettings[quality];
-
-                // EXT: audio - 오디오/마이크 스트림 병합 지점
-                const displayMediaOptions = {
-                    video: {
-                        width: { ideal: settings.width },
-                        height: { ideal: settings.height },
-                        frameRate: { ideal: fps }
-                    },
-                    audio: false
-                };
-
-                stream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+                const { stream: capturedStream, settings } = await createDisplayStream({ audio: audioEnabled });
+                stream = capturedStream;
 
                 // 라이브 미리보기 시작
                 livePreview.srcObject = stream;
@@ -1155,6 +1178,13 @@
                     autoStopRemainWrapper.style.display = 'none';
                 }
             } catch (err) {
+                if (err && err.code === 'NO_AUDIO_TRACK') {
+                    notify('warn', '공유된 화면에서 오디오를 가져올 수 없어 오디오 녹화를 비활성화했습니다. 브라우저 공유 대화상자에서 오디오 공유 옵션을 선택했는지 확인하세요.');
+                    recordAudioCheckbox.checked = false;
+                    handleAudioToggle();
+                    return;
+                }
+
                 console.error('녹화 시작 실패:', err);
                 alert('화면 녹화를 시작할 수 없습니다.');
             }
