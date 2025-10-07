@@ -1459,6 +1459,30 @@
         let autoStopTimeoutId = null;
         let autoStopDeadline = null;
 
+        // ===== Debug & State Enhancements =====
+        const DEBUG = false; // 필요 시 true로 변경하여 상세 로그 확인
+        // [DEBUG] prefix 로그만 필터링하도록 console.log 패치 (기존 코드 최소 변경)
+        (function(){
+            const ORIGINAL_CONSOLE_LOG = console.log.bind(console);
+            console.log = function(...args){
+                if(args.length && typeof args[0] === 'string' && args[0].startsWith('[DEBUG]')){
+                    if (DEBUG) ORIGINAL_CONSOLE_LOG(...args);
+                    return;
+                }
+                ORIGINAL_CONSOLE_LOG(...args);
+            };
+        })();
+
+        // 마지막 녹화 세션에서 오디오 트랙 존재 여부 저장 (stream 해제 후 참조 위해)
+        let lastRecordingHadAudio = false;
+
+        // 생성된 Blob Object URL 추적 (세션 종료 시 revoke)
+        const recordingUrls = [];
+        window.addEventListener('beforeunload', () => {
+            recordingUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(_){} });
+        });
+
+
         // 기능 토글 플래그
         let autoStopEnabled = false;
         let audioEnabled = false;
@@ -1878,8 +1902,16 @@
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 wasRecording = true;
                 console.log('[DEBUG] Calling mediaRecorder.stop()...');
+                // stop 전에 현재 stream의 오디오 여부 스냅샷
+                if (stream) {
+                    try {
+                        lastRecordingHadAudio = stream.getAudioTracks().some(t => t.readyState === 'live');
+                    } catch(_) { lastRecordingHadAudio = false; }
+                } else {
+                    lastRecordingHadAudio = false;
+                }
                 mediaRecorder.stop();
-                console.log('[DEBUG] mediaRecorder.stop() called, state:', mediaRecorder.state);
+                console.log('[DEBUG] mediaRecorder.stop() called, state:', mediaRecorder.state, 'lastRecordingHadAudio:', lastRecordingHadAudio);
             } else {
                 console.log('[DEBUG] mediaRecorder state is already inactive or null');
             }
@@ -1901,6 +1933,7 @@
             clearInterval(timerInterval);
             timerInterval = null;
             timer.textContent = '00:00';
+
 
             clearAutoStop();
                 autoStopRemainWrapper.style.display = 'none';
@@ -1927,6 +1960,14 @@
             const url = URL.createObjectURL(blob);
             console.log('[DEBUG] URL created:', url);
 
+            // 생성 URL 추적 및 오래된 것 정리 (최대 20개)
+            recordingUrls.push(url);
+            const MAX_URLS = 20;
+            while (recordingUrls.length > MAX_URLS) {
+                const old = recordingUrls.shift();
+                try { URL.revokeObjectURL(old); } catch(_){}
+            }
+
             preview.src = url;
             preview.style.display = 'block';
             livePreview.style.display = 'none';
@@ -1936,8 +1977,7 @@
             const duration = Math.floor((Date.now() - startTime) / 1000);
             const timestamp = new Date().toLocaleString('ko-KR');
             
-            const hasAudio = stream && stream.getAudioTracks().length > 0;
-            const suffix = hasAudio ? '_av' : '_v';
+            const suffix = lastRecordingHadAudio ? '_av' : '_v';
             
             console.log('[DEBUG] Calling addToList with:', {
                 type: 'video',
