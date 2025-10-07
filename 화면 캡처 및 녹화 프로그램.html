@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>화면 녹화 & 스크린샷 프로그램</title>
+    <title>크롬 녹화 스튜디오</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
@@ -339,6 +339,7 @@
             flex-direction: column;
             gap: 12px;
             margin-top: auto;
+            margin-bottom: 80px;
         }
 
         button {
@@ -683,7 +684,7 @@
             pointer-events: none;
         }
 
-        #livePreview, #preview, .screenshot-preview {
+        #livePreview, #preview {
             position: absolute;
             top: 0;
             left: 0;
@@ -695,7 +696,7 @@
             transition: opacity 0.3s ease;
         }
 
-        #livePreview.active, #preview.active, .screenshot-preview.active {
+        #livePreview.active, #preview.active {
             display: block;
             animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -715,14 +716,6 @@
             display: flex;
         }
 
-        .screenshot-preview {
-            cursor: zoom-in;
-            transition: transform 0.3s ease;
-        }
-
-        .screenshot-preview:hover {
-            transform: scale(1.02);
-        }
 
         .recordings-container {
             background: linear-gradient(135deg, var(--bg-secondary), var(--bg-accent));
@@ -769,7 +762,39 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding-right: 4px;
+            padding-right: 8px;
+            scroll-behavior: smooth;
+        }
+
+        /* 커스텀 스크롤바 스타일 */
+        .recordings-list-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .recordings-list-wrapper::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin: 4px 0;
+        }
+
+        .recordings-list-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .recordings-list-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #2563eb, #7c3aed);
+        }
+
+        .recordings-list-wrapper::-webkit-scrollbar-thumb:active {
+            background: linear-gradient(180deg, #1d4ed8, #6d28d9);
+        }
+
+        /* Firefox 스크롤바 스타일 */
+        .recordings-list-wrapper {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-blue) var(--bg-secondary);
         }
 
         .recording-item {
@@ -821,6 +846,59 @@
             font-size: 16px;
             color: var(--text-primary);
             font-weight: 600;
+        }
+
+        .recording-name-input {
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 600;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-blue);
+            border-radius: 4px;
+            padding: 4px 8px;
+            outline: none;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .recording-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .edit-btn {
+            padding: 8px 14px;
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 700;
+            white-space: nowrap;
+            border: 1px solid var(--accent-blue);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .edit-btn::before {
+            content: '\f044';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
+            background: linear-gradient(135deg, #2563eb, var(--accent-blue));
+        }
+
+        .edit-btn:active {
+            transform: translateY(0);
         }
 
         .recording-time {
@@ -1113,6 +1191,58 @@
             font-weight: 500;
         }
 
+        /* Footer Styles */
+        .app-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, 
+                rgba(19, 19, 26, 0.95), 
+                rgba(28, 28, 38, 0.95));
+            border-top: 1px solid var(--border-primary);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-blue);
+            background: rgba(76, 154, 255, 0.1);
+        }
+
+        .footer-link i {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-link:hover i {
+            transform: scale(1.1);
+        }
+
+        .footer-divider {
+            color: var(--border-secondary);
+            margin: 0 4px;
+        }
+
         /* 토스트 애니메이션 */
         @keyframes toastSlideIn {
             0% {
@@ -1256,30 +1386,6 @@
                 </div>
             </div>
 
-            <!-- 스크린샷 설정 -->
-
-            <div class="section">
-                <div class="section-title">스크린샷 설정</div>
-                <div class="setting-group">
-                    <label>이미지 형식</label>
-                    <select id="imageFormat">
-                        <option value="png">PNG (고화질)</option>
-                        <option value="jpeg">JPEG (압축)</option>
-                        <option value="webp">WebP</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="continuousMode">
-                        연속 스크린샷 모드
-                    </label>
-                </div>
-                <div class="setting-group" id="intervalGroup" style="display: none;">
-                    <label>캡처 간격 (초)</label>
-                    <input type="number" id="captureInterval" min="1" max="60" value="5">
-                </div>
-            </div>
-
             <!-- 컨트롤 버튼 -->
             <div class="control-buttons">
                 <button id="startRecordBtn" class="btn-primary">
@@ -1289,14 +1395,6 @@
                 <button id="stopRecordBtn" class="btn-danger" disabled>
                     <i class="fa-solid fa-circle-stop"></i>
                     녹화 중지
-                </button>
-                <button id="screenshotBtn" class="btn-secondary">
-                    <i class="fa-solid fa-camera"></i>
-                    스크린샷
-                </button>
-                <button id="continuousBtn" class="btn-secondary" style="display: none;">
-                    <i class="fa-solid fa-images"></i>
-                    연속 캡처 시작
                 </button>
             </div>
         </div>
@@ -1320,7 +1418,6 @@
                     <div class="preview-content">
                         <video id="livePreview" autoplay muted></video>
                         <video id="preview" controls></video>
-                        <img class="screenshot-preview" id="screenshotPreview" alt="스크린샷 미리보기">
                         <div class="empty-state" id="emptyPreview">캡처된 내용이 여기에 표시됩니다</div>
                     </div>
                 </div>
@@ -1337,26 +1434,26 @@
         </div>
     </div>
 
-    <!-- 이미지 확대 모달 -->
-    <div id="imageModal" class="modal">
-        <button class="close-modal" onclick="closeModal()">×</button>
-        <div class="modal-content">
-            <img id="modalImage" src="" alt="확대 이미지">
-        </div>
-    </div>
+
 
     <!-- 토스트 알림 컨테이너 -->
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <span>Made by</span>
+        <a href="https://github.com/kihyunnn" target="_blank" rel="noopener noreferrer" class="footer-link">
+            <i class="fa-brands fa-github"></i>
+            <span>kihyunnn</span>
+        </a>
+    </footer>
 
     <script>
         let mediaRecorder;
         let recordedChunks = [];
         let stream;
-        let continuousStream = null;
         let startTime;
         let recordingCount = 0;
-        let screenshotCount = 0;
-        let continuousInterval;
         let timerInterval;
         let hasRecordings = false;
         let autoStopTimeoutId = null;
@@ -1372,19 +1469,12 @@
 
         const startRecordBtn = document.getElementById('startRecordBtn');
         const stopRecordBtn = document.getElementById('stopRecordBtn');
-        const screenshotBtn = document.getElementById('screenshotBtn');
-        const continuousBtn = document.getElementById('continuousBtn');
         const preview = document.getElementById('preview');
         const livePreview = document.getElementById('livePreview');
-        const screenshotPreview = document.getElementById('screenshotPreview');
         const statusText = document.getElementById('statusText');
         const statusDot = document.getElementById('statusDot');
         const timer = document.getElementById('timer');
         const recordingsList = document.getElementById('recordingsList');
-        const continuousMode = document.getElementById('continuousMode');
-        const intervalGroup = document.getElementById('intervalGroup');
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
         const emptyPreview = document.getElementById('emptyPreview');
         const liveBadge = document.getElementById('liveBadge');
         const autoStopSection = document.getElementById('autoStopSection');
@@ -1407,11 +1497,6 @@
         // 이벤트 리스너
         startRecordBtn.addEventListener('click', startRecording);
         stopRecordBtn.addEventListener('click', stopRecording);
-        screenshotBtn.addEventListener('click', takeScreenshot);
-        continuousBtn.addEventListener('click', toggleContinuousCapture);
-        continuousMode.addEventListener('change', handleContinuousModeChange);
-        screenshotPreview.addEventListener('click', openModal);
-        imageModal.addEventListener('click', closeModal);
         autoStopCheckbox.addEventListener('change', handleAutoStopToggle);
         autoStopMinutesInput.addEventListener('change', handleAutoStopInputChange);
         autoStopSecondsInput.addEventListener('change', handleAutoStopInputChange);
@@ -1452,20 +1537,7 @@
         }
 
         // 연속 캡처 모드 변경 처리
-        function handleContinuousModeChange() {
-            if (continuousMode.checked) {
-                intervalGroup.style.display = 'block';
-                screenshotBtn.style.display = 'none';
-                continuousBtn.style.display = 'block';
-            } else {
-                intervalGroup.style.display = 'none';
-                screenshotBtn.style.display = 'block';
-                continuousBtn.style.display = 'none';
-                if (continuousInterval) {
-                    stopContinuousCapture();
-                }
-            }
-        }
+
 
         function handleAutoStopToggle() {
             autoStopEnabled = autoStopCheckbox.checked;
@@ -1696,7 +1768,6 @@
                 livePreview.srcObject = stream;
                 livePreview.style.display = 'block';
                 preview.style.display = 'none';
-                screenshotPreview.style.display = 'none';
                 emptyPreview.style.display = 'none';
                 liveBadge.classList.add('active');
 
@@ -1859,7 +1930,6 @@
             preview.src = url;
             preview.style.display = 'block';
             livePreview.style.display = 'none';
-            screenshotPreview.style.display = 'none';
             emptyPreview.style.display = 'none';
             
             recordingCount++;
@@ -1881,147 +1951,8 @@
             console.log('[DEBUG] addToList completed');
         }
 
-        // 스크린샷 촬영
-        async function takeScreenshot() {
-            try {
-                const displayMediaOptions = {
-                    video: true,
-                    audio: false
-                };
 
-                const captureStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-                const video = document.createElement('video');
-                video.srcObject = captureStream;
-                video.play();
 
-                video.onloadedmetadata = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    
-                    setTimeout(() => {
-                        ctx.drawImage(video, 0, 0);
-                        
-                        const format = document.getElementById('imageFormat').value;
-                        const mimeType = format === 'png' ? 'image/png' : 
-                                    format === 'jpeg' ? 'image/jpeg' : 'image/webp';
-                        
-                        canvas.toBlob((blob) => {
-                            const url = URL.createObjectURL(blob);
-                            screenshotPreview.src = url;
-                            screenshotPreview.style.display = 'block';
-                            preview.style.display = 'none';
-                            livePreview.style.display = 'none';
-                            emptyPreview.style.display = 'none';
-                            
-                            screenshotCount++;
-                            const timestamp = new Date().toLocaleString('ko-KR');
-                            addToList('screenshot', url, `스크린샷 ${screenshotCount}`, timestamp, format.toUpperCase());
-                        }, mimeType);
-                        
-                        captureStream.getTracks().forEach(track => track.stop());
-                    }, 100);
-                };
-            } catch (err) {
-                console.error('스크린샷 실패:', err);
-            }
-        }
-
-        // 연속 캡처용 스크린샷 (팝업 없이)
-        async function takeContinuousScreenshot() {
-            if (!continuousStream || !continuousStream.active) {
-                return;
-            }
-
-            const video = document.createElement('video');
-            video.srcObject = continuousStream;
-            video.play();
-
-            video.onloadedmetadata = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const ctx = canvas.getContext('2d');
-                
-                setTimeout(() => {
-                    ctx.drawImage(video, 0, 0);
-                    
-                    const format = document.getElementById('imageFormat').value;
-                    const mimeType = format === 'png' ? 'image/png' : 
-                                     format === 'jpeg' ? 'image/jpeg' : 'image/webp';
-                    
-                    canvas.toBlob((blob) => {
-                        const url = URL.createObjectURL(blob);
-                        screenshotPreview.src = url;
-                        screenshotPreview.style.display = 'block';
-                        preview.style.display = 'none';
-                        livePreview.style.display = 'none';
-                        emptyPreview.style.display = 'none';
-                        
-                        screenshotCount++;
-                        const timestamp = new Date().toLocaleString('ko-KR');
-                        addToList('screenshot', url, `스크린샷 ${screenshotCount}`, timestamp, format.toUpperCase());
-                    }, mimeType);
-                }, 100);
-            };
-        }
-
-        // 연속 캡처 토글
-        async function toggleContinuousCapture() {
-            if (continuousInterval) {
-                stopContinuousCapture();
-            } else {
-                await startContinuousCapture();
-            }
-        }
-
-        // 연속 캡처 시작
-        async function startContinuousCapture() {
-            try {
-                // 한 번만 화면 선택
-                const displayMediaOptions = {
-                    video: true,
-                    audio: false
-                };
-
-                continuousStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-                
-                // 스트림이 끝나면 연속 캡처 중지
-                continuousStream.getVideoTracks()[0].onended = () => {
-                    stopContinuousCapture();
-                };
-
-                const interval = parseInt(document.getElementById('captureInterval').value) * 1000;
-                continuousBtn.textContent = '연속 캡처 중지';
-                statusText.textContent = '연속 캡처 중';
-                
-                // 즉시 첫 번째 캡처
-                await takeContinuousScreenshot();
-                
-                // 설정된 간격으로 캡처
-                continuousInterval = setInterval(takeContinuousScreenshot, interval);
-            } catch (err) {
-                console.error('연속 캡처 시작 실패:', err);
-                alert('화면 캡처를 시작할 수 없습니다.');
-            }
-        }
-
-        // 연속 캡처 중지
-        function stopContinuousCapture() {
-            if (continuousInterval) {
-                clearInterval(continuousInterval);
-                continuousInterval = null;
-            }
-            
-            if (continuousStream) {
-                continuousStream.getTracks().forEach(track => track.stop());
-                continuousStream = null;
-            }
-            
-            continuousBtn.textContent = '연속 캡처 시작';
-            statusText.textContent = '대기 중';
-        }
 
         // 기록 목록에 추가
         function addToList(type, url, name, timestamp, info) {
@@ -2041,11 +1972,88 @@
             console.log('[DEBUG] Item created, extension:', extension);
             item.innerHTML = `
                 <div class="recording-info">
-                    <div class="recording-name">${name}</div>
+                    <div class="recording-name" data-original-name="${name}" data-extension="${extension}">${name}</div>
                     <div class="recording-time">${timestamp} • ${info}</div>
                 </div>
-                <a href="${url}" download="${name}.${extension}" class="download-btn">다운로드</a>
+                <div class="recording-actions">
+                    <button class="edit-btn">수정</button>
+                    <a href="${url}" download="${name}.${extension}" class="download-btn">다운로드</a>
+                </div>
             `;
+            
+            // 편집 버튼 클릭 이벤트
+            const editBtn = item.querySelector('.edit-btn');
+            const nameElement = item.querySelector('.recording-name');
+            const downloadBtn = item.querySelector('.download-btn');
+            
+            editBtn.addEventListener('click', function() {
+                const currentName = nameElement.textContent;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'recording-name-input';
+                input.value = currentName;
+                
+                nameElement.replaceWith(input);
+                input.focus();
+                input.select();
+                
+                // 버튼 텍스트를 "저장"으로 변경
+                editBtn.textContent = '저장';
+                editBtn.style.background = 'linear-gradient(135deg, var(--accent-green), #059669)';
+                editBtn.style.borderColor = 'var(--accent-green)';
+                
+                function saveEdit() {
+                    const newName = input.value.trim() || currentName;
+                    const newNameElement = document.createElement('div');
+                    newNameElement.className = 'recording-name';
+                    newNameElement.textContent = newName;
+                    newNameElement.setAttribute('data-original-name', input.getAttribute('data-original-name') || currentName);
+                    newNameElement.setAttribute('data-extension', input.getAttribute('data-extension') || extension);
+                    
+                    input.replaceWith(newNameElement);
+                    
+                    // 다운로드 버튼의 download 속성 업데이트
+                    const ext = newNameElement.getAttribute('data-extension');
+                    downloadBtn.setAttribute('download', `${newName}.${ext}`);
+                    
+                    // 버튼 텍스트를 "수정"으로 복원
+                    editBtn.textContent = '수정';
+                    editBtn.style.background = 'linear-gradient(135deg, var(--accent-blue), #2563eb)';
+                    editBtn.style.borderColor = 'var(--accent-blue)';
+                }
+                
+                // 저장 버튼으로 변경된 상태에서 클릭 시 저장
+                const saveHandler = function(e) {
+                    e.stopPropagation();
+                    saveEdit();
+                    editBtn.removeEventListener('click', saveHandler);
+                };
+                editBtn.addEventListener('click', saveHandler);
+                
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        saveEdit();
+                        editBtn.removeEventListener('click', saveHandler);
+                    } else if (e.key === 'Escape') {
+                        const newNameElement = document.createElement('div');
+                        newNameElement.className = 'recording-name';
+                        newNameElement.textContent = currentName;
+                        newNameElement.setAttribute('data-original-name', this.getAttribute('data-original-name') || currentName);
+                        newNameElement.setAttribute('data-extension', this.getAttribute('data-extension') || extension);
+                        this.replaceWith(newNameElement);
+                        
+                        // 버튼 복원
+                        editBtn.textContent = '수정';
+                        editBtn.style.background = 'linear-gradient(135deg, var(--accent-blue), #2563eb)';
+                        editBtn.style.borderColor = 'var(--accent-blue)';
+                        editBtn.removeEventListener('click', saveHandler);
+                    }
+                });
+                
+                // data 속성 전달
+                input.setAttribute('data-original-name', nameElement.getAttribute('data-original-name') || currentName);
+                input.setAttribute('data-extension', nameElement.getAttribute('data-extension') || extension);
+            });
             
             console.log('[DEBUG] Inserting item into recordingsList...');
             recordingsList.insertBefore(item, recordingsList.firstChild);
@@ -2087,17 +2095,7 @@
         }
 
         // 모달 열기
-        function openModal() {
-            if (screenshotPreview.src && screenshotPreview.style.display !== 'none') {
-                modalImage.src = screenshotPreview.src;
-                imageModal.style.display = 'block';
-            }
-        }
 
-        // 모달 닫기
-        function closeModal() {
-            imageModal.style.display = 'none';
-        }
 
         // ============================================
         // 테스트 헬퍼 함수 (개발자 콘솔에서 사용)
