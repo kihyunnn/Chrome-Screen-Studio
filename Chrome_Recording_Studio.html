@@ -91,21 +91,26 @@
             height: 100vh;
         }
 
-        /* 왼쪽 설정 패널 */
+        /* 왼쪽 설정 패널 - 반응형 */
         .settings-panel {
-            width: 380px;
+            width: clamp(320px, 25vw, 420px);
+            min-width: 320px;
+            max-width: 420px;
             background: linear-gradient(180deg, var(--bg-secondary) 0%, #0f0f16 100%);
             border-right: 1px solid var(--border-primary);
-            padding: 28px;
-            overflow: hidden;
+            padding: clamp(16px, 2vw, 28px);
+            overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
+            height: 100vh;
+            scroll-behavior: smooth;
         }
 
         .logo {
-            font-size: 26px;
-            margin-bottom: 28px;
+            font-size: clamp(22px, 2.8vw, 26px);
+            margin-bottom: clamp(20px, 3vw, 28px);
             text-align: center;
             color: var(--text-primary);
             font-weight: 700;
@@ -116,6 +121,7 @@
             background-clip: text;
             text-shadow: 0 0 30px var(--accent-blue-glow);
             animation: logoGlow 3s ease-in-out infinite;
+            flex-shrink: 0;
         }
 
         @keyframes logoGlow {
@@ -125,14 +131,15 @@
 
         .section {
             background: var(--bg-tertiary);
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 18px;
+            border-radius: clamp(10px, 1.5vw, 14px);
+            padding: clamp(14px, 2vw, 20px);
+            margin-bottom: clamp(12px, 1.5vw, 18px);
             border: 1px solid var(--border-primary);
             box-shadow: var(--shadow-md);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .section::before {
@@ -158,12 +165,12 @@
         }
 
         .section-title {
-            font-size: 18px;
-            margin-bottom: 16px;
+            font-size: clamp(16px, 1.8vw, 18px);
+            margin-bottom: clamp(12px, 1.5vw, 16px);
             color: var(--text-primary);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: clamp(8px, 1vw, 10px);
             font-weight: 600;
             letter-spacing: -0.3px;
         }
@@ -178,7 +185,7 @@
         }
 
         .setting-group {
-            margin-bottom: 14px;
+            margin-bottom: clamp(10px, 1.5vw, 14px);
         }
 
         .setting-group:last-child {
@@ -188,7 +195,7 @@
         .auto-stop-time {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: clamp(8px, 1.2vw, 12px);
         }
 
         .auto-stop-time .time-input {
@@ -197,17 +204,17 @@
 
         .time-separator {
             color: var(--text-secondary);
-            font-size: 18px;
-            padding: 0 4px;
+            font-size: clamp(16px, 2vw, 18px);
+            padding: 0 clamp(2px, 0.5vw, 4px);
         }
 
         .helper-text {
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: clamp(12px, 1.4vw, 13px);
         }
 
         .auto-stop-remain {
-            font-size: 20px;
+            font-size: clamp(18px, 2.2vw, 20px);
             font-weight: bold;
             letter-spacing: 1px;
             color: var(--text-primary);
@@ -223,8 +230,8 @@
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: clamp(6px, 1vw, 8px);
+            font-size: clamp(13px, 1.5vw, 14px);
             font-weight: 500;
             color: var(--text-secondary);
             letter-spacing: -0.2px;
@@ -232,13 +239,13 @@
 
         select, input[type="number"] {
             width: 100%;
-            padding: 11px 14px;
+            padding: clamp(9px, 1.2vw, 11px) clamp(12px, 1.5vw, 14px);
             background: var(--bg-accent);
             border: 1.5px solid var(--border-secondary);
-            border-radius: 10px;
+            border-radius: clamp(8px, 1.2vw, 10px);
             color: var(--text-primary);
             font-family: 'Noto Sans KR', sans-serif;
-            font-size: 14px;
+            font-size: clamp(13px, 1.5vw, 14px);
             font-weight: 500;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-xs);
@@ -284,7 +291,7 @@
             align-items: center;
             cursor: pointer;
             color: var(--text-primary);
-            font-size: 15px;
+            font-size: clamp(14px, 1.6vw, 15px);
             font-weight: 500;
             transition: color 0.3s;
         }
@@ -337,17 +344,18 @@
         .control-buttons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: auto;
-            margin-bottom: 80px;
+            gap: clamp(10px, 1.5vw, 12px);
+            margin-top: clamp(16px, 2vw, 24px);
+            margin-bottom: clamp(16px, 2vw, 24px);
+            flex-shrink: 0;
         }
 
         button {
-            padding: 14px 16px;
-            font-size: 16px;
+            padding: clamp(12px, 1.5vw, 14px) clamp(14px, 1.8vw, 16px);
+            font-size: clamp(14px, 1.8vw, 16px);
             font-family: 'Noto Sans KR', sans-serif;
             border: 2px solid var(--border-secondary);
-            border-radius: 12px;
+            border-radius: clamp(10px, 1.5vw, 12px);
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 600;
@@ -360,11 +368,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: clamp(8px, 1.2vw, 10px);
         }
 
         button i {
-            font-size: 18px;
+            font-size: clamp(16px, 2vw, 18px);
             transition: transform 0.3s ease;
         }
 
@@ -1317,6 +1325,112 @@
         .tooltip:hover::after {
             opacity: 1;
             transform: translateY(-12px) rotate(-15deg);
+        }
+
+        /* 반응형 미디어 쿼리 */
+        
+        /* 태블릿 (768px 이하) */
+        @media (max-width: 768px) {
+            .settings-panel {
+                width: clamp(280px, 90vw, 380px);
+                padding: clamp(12px, 3vw, 20px);
+            }
+
+            .section {
+                padding: clamp(12px, 2.5vw, 16px);
+                margin-bottom: clamp(10px, 2vw, 14px);
+            }
+
+            .section-title {
+                font-size: clamp(15px, 2.2vw, 17px);
+                margin-bottom: clamp(10px, 2vw, 14px);
+            }
+
+            button {
+                padding: clamp(10px, 2vw, 12px) clamp(12px, 2.5vw, 14px);
+                font-size: clamp(13px, 2vw, 15px);
+            }
+
+            .control-buttons {
+                margin-bottom: clamp(50px, 10vw, 70px);
+            }
+        }
+
+        /* 모바일 (480px 이하) */
+        @media (max-width: 480px) {
+            .settings-panel {
+                width: clamp(260px, 95vw, 320px);
+                padding: clamp(10px, 4vw, 16px);
+            }
+
+            .logo {
+                font-size: clamp(18px, 4vw, 22px);
+                margin-bottom: clamp(16px, 4vw, 20px);
+            }
+
+            .section {
+                padding: clamp(10px, 3vw, 14px);
+                margin-bottom: clamp(8px, 2.5vw, 12px);
+                border-radius: clamp(8px, 2vw, 10px);
+            }
+
+            .section-title {
+                font-size: clamp(14px, 2.5vw, 16px);
+                margin-bottom: clamp(8px, 2.5vw, 12px);
+                gap: clamp(6px, 1.5vw, 8px);
+            }
+
+            .setting-group {
+                margin-bottom: clamp(8px, 2vw, 12px);
+            }
+
+            label {
+                font-size: clamp(12px, 2vw, 13px);
+                margin-bottom: clamp(5px, 1.5vw, 7px);
+            }
+
+            select, input[type="number"] {
+                padding: clamp(8px, 1.5vw, 10px) clamp(10px, 2vw, 12px);
+                font-size: clamp(12px, 2vw, 13px);
+                border-radius: clamp(7px, 1.5vw, 9px);
+            }
+
+            .auto-stop-time {
+                gap: clamp(6px, 1.5vw, 8px);
+            }
+
+            .time-separator {
+                font-size: clamp(14px, 2.5vw, 16px);
+                padding: 0 clamp(1px, 0.5vw, 2px);
+            }
+
+            button {
+                padding: clamp(9px, 2.5vw, 11px) clamp(10px, 3vw, 12px);
+                font-size: clamp(12px, 2.5vw, 14px);
+                border-radius: clamp(8px, 2vw, 10px);
+                gap: clamp(6px, 1.5vw, 8px);
+            }
+
+            button i {
+                font-size: clamp(14px, 2.5vw, 16px);
+            }
+
+            .control-buttons {
+                gap: clamp(8px, 2vw, 10px);
+                margin-bottom: clamp(40px, 12vw, 60px);
+            }
+
+            .helper-text {
+                font-size: clamp(11px, 1.8vw, 12px);
+            }
+
+            .auto-stop-remain {
+                font-size: clamp(16px, 3vw, 18px);
+            }
+
+            .checkbox-label {
+                font-size: clamp(13px, 2vw, 14px);
+            }
         }
     </style>
 </head>
