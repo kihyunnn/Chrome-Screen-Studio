@@ -1,92 +1,92 @@
-# Screen Capture Studio - PRD (Product Requirements Document)
+# Chrome Recording Studio - PRD (Product Requirements Document)
 
-## 1. 문서 목적
-현재 단일 `HTML` 파일로 동작하는 화면 녹화/스크린샷 웹 도구의 기능 명세와 향후 확장 계획을 정의한다. 자동 시간 종료, 오디오 녹화 등 핵심 기능이 구현 완료되었으며, 추가 기능은 선택적으로 진행한다.
+## 1. Document Purpose
+Defines the feature specifications and future expansion plans for a screen recording web tool operating as a single `HTML` file. Core features including auto-stop timer and audio recording have been completed, with additional features to be implemented selectively.
 
-## 2. 현재 버전 요약 (v1.1 Complete)
-| 구분 | 내용 |
-|------|------|
-| 아키텍처 | Pure HTML + Inline CSS + Vanilla JS (단일 파일) |
-| 주요 API | `getDisplayMedia`, `MediaRecorder`, `Canvas` |
-| 코덱/포맷 | WebM (VP8/VP9) |
-| 구현 완료 | 화면 녹화, 스크린샷 1회/연속 캡처, 품질(4K/FHD/HD)/FPS 설정, 자동 시간 종료(최대 180분), 시스템/탭 오디오 녹음, 기록 목록·다운로드, 미리보기/모달 확대 |
-| 미구현 | OCR 기반 타이머 감지, 설정 LocalStorage 저장, Toast 알림, 다국어 지원 |
-| 대상 브라우저 | Chromium 기반 (Chrome 94+ / Edge 94+) 권장 |
+## 2. Current Version Summary (v1.1 Complete)
+| Category | Content |
+|----------|---------|
+| Architecture | Pure HTML + Inline CSS + Vanilla JS (single file) |
+| Main APIs | `getDisplayMedia`, `MediaRecorder` |
+| Codec/Format | WebM (VP8/VP9), output extension: `.webm` |
+| Implemented | Screen recording, quality settings (4K/FHD/HD), FPS control, auto-stop timer (max 180 minutes), system/tab audio recording, recording history & download, live preview |
+| Not Implemented | OCR-based timer detection, LocalStorage settings persistence, Toast notifications, multi-language support |
+| Target Browsers | Chromium-based (Chrome 94+ / Edge 94+) recommended |
+| File Name | `Chrome_Recording_Studio.html` |
 
-### 2.1 현재 UI 구조
-- 좌측: 설정 패널 (녹화 품질, FPS, 연속 캡처 여부/간격, 스크린샷 포맷 등)
-- 우측: 상태 표시 (녹화 여부, 타이머), 실시간 미리보기, 최근 스크린샷, 기록 리스트
-- 모달: 스크린샷 확대 표시
+### 2.1 Current UI Structure
+- Left: Settings panel (recording quality, FPS, audio options, auto-stop timer settings)
+- Right: Status display (recording status, timer), live preview, recording history list
+- No screenshot or modal features
 
-### 2.2 상태 관리 (전역 변수)
-- **미디어**: `mediaRecorder`, `recordedChunks`, `stream`, `continuousStream`
-- **카운터**: `recordingCount`, `screenshotCount`, `hasRecordings`
-- **타이머**: `timerInterval`, `continuousInterval`, `autoStopTimeoutId`, `autoStopDeadline`, `startTime`
-- **기능 플래그**: `autoStopEnabled`, `audioEnabled`, `micMixEnabled` (예약됨)
-- **UI 상태**: 녹화 여부(버튼 enable/disable), LIVE 뱃지, 빈 상태 메시지 표시
+### 2.2 State Management (Global Variables)
+- **Media**: `mediaRecorder`, `recordedChunks`, `stream`
+- **Counters**: `recordingCount`, `hasRecordings`
+- **Timers**: `timerInterval`, `autoStopTimeoutId`, `autoStopDeadline`, `startTime`
+- **Feature Flags**: `autoStopEnabled`, `audioEnabled`
+- **UI State**: Recording status (button enable/disable), LIVE badge, empty state message display
 
-### 2.3 주요 흐름
-1. Start Recording → `getDisplayMedia` → `MediaRecorder` 시작 → 실시간 프리뷰 표시
-2. Stop Recording → `mediaRecorder.stop()` → blob 생성 → 기록 리스트에 추가
-3. Screenshot → `drawImage` → `toDataURL` → 기록 추가 & 미리보기 갱신
-4. 연속 캡처 → 간격 기반 `setInterval` 로 반복 스크린샷 → 리스트 누적
+### 2.3 Main Flow
+1. Start Recording → `getDisplayMedia` → `MediaRecorder` starts → Live preview display
+2. Stop Recording → `mediaRecorder.stop()` → blob generation → Add to recording list
+3. Auto-stop → Timer expires → Automatic `stopRecording()` execution
 
-### 2.4 현재 한계/리스크
-| 영역 | 이슈 | 영향 |
-|------|------|------|
-| 단일 파일 | 규모 증가 시 유지보수 난이도 상승 | 가독성 저하 |
-| 전역 변수 | 예측 어려움/사이드이펙트 가능 | 버그 추적 어려움 |
-| 오류 처리 | 사용자 피드백 제한 (alert 위주) | UX 저하 |
-| 포맷 옵션 | 비디오 코덱/비트레이트 제어 부족 | 품질/용량 제어 어려움 |
-| 접근성 | 키보드 포커스/ARIA 미구현 | 접근성 부족 |
-| 국제화 | 하드코딩된 한국어 UI | 다국어 확장 어려움 |
-| 성능 | 대용량 연속 캡처 누적 메모리 | 탭 느려짐 가능 |
+### 2.4 Current Limitations/Risks
+| Area | Issue | Impact |
+|------|-------|--------|
+| Single File | Increasing maintenance difficulty as scale grows | Reduced readability |
+| Global Variables | Unpredictable side effects | Difficult bug tracking |
+| Error Handling | Limited user feedback (mainly alerts) | Poor UX |
+| Format Options | Lack of video codec/bitrate control | Difficult quality/size control |
+| Accessibility | Missing keyboard focus/ARIA | Poor accessibility |
+| Internationalization | Hardcoded Korean UI | Difficult multi-language expansion |
 
 ---
 
-## 3. 구현 완료 기능 상세
+## 3. Implemented Features Details
 
-### 3.1 자동 시간 기반 녹화 종료 ✅
-| 항목 | 내용 |
-|------|------|
-| 목적 | 사용자가 미리 설정한 분/초 경과 후 자동 `stopRecording()` |
-| 입력 | (체크박스) 자동 종료 활성화, (숫자) 분, 초 |
-| 기본값 | 비활성 / 10분 0초 |
-| 한계 | 최대 180분 제한, 0분 0초 입력 시 비활성 처리 |
-| 구현 | `calcAutoStopMs()` 검증, `scheduleAutoStop()` 예약, `clearAutoStop()` 해제 |
-| UI | 설정 패널 섹션, 남은 시간 실시간 표시, 60초 이하 orange / 10초 이하 red 강조 |
-| 에러 처리 | NaN/음수 → 기본값, 180분 초과 → 180분 clamp + 알림 |
+### 3.1 Auto Time-based Recording Stop ✅
+| Item | Content |
+|------|---------|
+| Purpose | Automatically execute `stopRecording()` after user-set minutes/seconds |
+| Input | (Checkbox) Auto-stop activation, (Number) minutes, seconds |
+| Default | Inactive / 10 minutes 0 seconds |
+| Limits | Max 180 minutes, deactivates if 0m 0s input |
+| Implementation | `calcAutoStopMs()` validation, `scheduleAutoStop()` scheduling, `clearAutoStop()` release |
+| UI | Settings panel section, real-time remaining time display, orange when ≤60s / red when ≤10s |
+| Error Handling | NaN/negative → default value, >180min → clamp to 180min + notification |
 
-### 3.2 오디오 녹화 (시스템/탭 오디오) ✅
-| 항목 | 내용 |
-|------|------|
-| 목적 | 강의 영상 등 오디오 포함 녹화 |
-| 입력 | (체크박스) 오디오 포함 |
+### 3.2 Audio Recording (System/Tab Audio) ✅
+| Item | Content |
+|------|---------|
+| Purpose | Record with lecture audio included |
+| Input | (Checkbox) Include audio |
 | API | `navigator.mediaDevices.getDisplayMedia({ audio: true })` |
-| 제약 | 브라우저/OS별 시스템 오디오 지원 상이 (Chrome/Edge Windows: 완전 지원) |
-| 구현 | `createDisplayStream({ audio })` 함수로 스트림 생성, 오디오 트랙 체크 |
-| 파일명 | 오디오 포함 시 `_av` suffix, 없으면 `_v` |
-| 에러 처리 | 오디오 트랙 미획득 → 비디오만 녹화 fallback + 사용자 안내 |
-| 참고 | 마이크 믹싱 기능 제외 (시스템/탭 오디오만 지원) |
+| Constraints | System audio support varies by browser/OS (Chrome/Edge Windows: full support) |
+| Implementation | `createDisplayStream({ audio })` function creates stream, checks audio tracks |
+| Filename | `_av` suffix when audio included, `_v` without |
+| Error Handling | Audio track not acquired → video-only recording fallback + user notification |
+| Note | Microphone mixing feature excluded (system/tab audio only supported) |
 
 ---
 
-## 4. 향후 확장 계획 (Optional)
+## 4. Future Expansion Plans (Optional)
 
-### 4.1 우선순위 중 (v1.2 후보)
-- **LocalStorage 설정 저장**: 마지막 사용한 품질/FPS/오디오/자동종료 설정 복원
-- **Toast 알림**: alert 대체, 부드러운 fade-in/out 메시지
+### 4.1 Medium Priority (v1.2 Candidates)
+- **LocalStorage Settings Persistence**: Restore last used quality/FPS/audio/auto-stop settings
+- **Toast Notifications**: Replace alerts with smooth fade-in/out messages
 
-### 4.2 우선순위 하 (v1.3 이후)
-- **OCR 기반 화면 타이머 감지**: tesseract.js 활용, 실험적 기능
-- **다국어 지원 (i18n)**: 영어/한국어 전환
-- **비디오 비트레이트 커스텀**: MediaRecorder 옵션 확장
-- **다크/라이트 테마 토글**: 사용자 선택 가능
+### 4.2 Low Priority (v1.3 and Beyond)
+- **OCR-based Screen Timer Detection**: Using tesseract.js, experimental feature
+- **Multi-language Support (i18n)**: English/Korean switching
+- **Custom Video Bitrate**: Extend MediaRecorder options
+- **Dark/Light Theme Toggle**: User-selectable
 
 ---
 
-## 5. 제거된 기능
-- **마이크 믹싱**: 시스템 오디오와 마이크 동시 녹음 → 복잡도 및 echo 문제로 제외
+## 5. Removed Features
+- **Screenshot Capture**: Single and continuous screenshot features removed - now pure recording tool
+- **Microphone Mixing**: Simultaneous system audio and microphone recording → Excluded due to complexity and echo issues
 ---
 
 ## 6. UX / UI 설계 지침
@@ -103,81 +103,122 @@
 
 ---
 
-## 7. 기술 설계
+## 7. Technical Design
 
-### 7.1 구조 (단일 파일)
+### 7.1 Structure (Single File)
 ```text
 <html>
   <head>
-    <style>/* Dark Theme CSS */</style>
+    <style>/* Dark Theme CSS + Modern Gradient Effects */</style>
+    <link> Font Awesome icons
+    <link> Noto Sans KR font
   </head>
   <body>
-    <!-- Settings Panel: 품질/FPS/오디오/자동종료 설정 -->
-    <!-- Result Panel: 상태/타이머/미리보기/기록 리스트 -->
-    <!-- Modal: 이미지 확대 -->
+    <!-- Settings Panel: quality/FPS/audio/auto-stop settings -->
+    <!-- Result Panel: status/timer/preview/recording list -->
     <script>
-      // 전역 변수: mediaRecorder, stream, timers, flags
-      // 핵심 함수: startRecording(), stopRecording(), takeScreenshot()
-      // 자동 종료: calcAutoStopMs(), scheduleAutoStop(), clearAutoStop()
-      // 오디오: createDisplayStream({ audio })
+      // Global variables: mediaRecorder, stream, timers, flags
+      // Core functions: startRecording(), stopRecording()
+      // Auto-stop: calcAutoStopMs(), scheduleAutoStop(), clearAutoStop()
+      // Audio: createDisplayStream({ audio })
     </script>
   </body>
 </html>
 ```
 
-### 7.2 구현 완료 함수
-| 함수 | 역할 |
-|------|------|
-| `calcAutoStopMs(m, s)` | 입력 검증 (0~180분 clamping, NaN 처리), clamp 알림 |
-| `scheduleAutoStop(ms)` | setTimeout 예약, 기존 예약 clear, deadline 설정 |
-| `clearAutoStop()` | 타이머 해제, deadline 초기화 |
-| `createDisplayStream({ audio })` | getDisplayMedia 호출, 오디오 옵션 포함, 트랙 확인 |
-| `formatTime(sec)` | MM:SS 포맷 변환 |
-| `addToList(type, url, name, time, detail)` | 기록 리스트 추가 (video/_av/_v, screenshot) |
-| `startRecording()` | 녹화 시작, 자동 종료 예약, 오디오 스트림 획득 |
-| `stopRecording()` | 녹화 중지, 자동 종료 해제, 스트림 정리 |
-| `startTimer()` | 녹화 타이머 UI 업데이트, 남은 시간 표시 (60초↓ orange, 10초↓ red) |
+### 7.2 Implemented Functions
+| Function | Role |
+|----------|------|
+| `calcAutoStopMs(m, s)` | Input validation (0~180min clamping, NaN handling), clamp notification |
+| `scheduleAutoStop(ms)` | setTimeout scheduling, clear existing schedule, set deadline |
+| `clearAutoStop()` | Release timer, reset deadline |
+| `createDisplayStream({ audio })` | Call getDisplayMedia, include audio option, check tracks |
+| `formatTime(sec)` | MM:SS format conversion |
+| `addToList(type, url, name, time, detail)` | Add to recording list (video/_av/_v) |
+| `startRecording()` | Start recording, schedule auto-stop, acquire audio stream |
+| `stopRecording()` | Stop recording, release auto-stop, cleanup streams |
+| `startTimer()` | Update recording timer UI, display remaining time (≤60s orange, ≤10s red) |
 
-### 7.3 미구현 함수 (향후)
-- `mixAudioStreams()`: 마이크 + 시스템 오디오 믹싱 (제외됨)
-- `ocrLoop()`: OCR 기반 타이머 감지 (선택적)
-| 상황 | 처리 |
-|------|------|
-| 권한 거부 | UI 배너: "화면 공유 권한이 필요합니다" |
-| 오디오 트랙 없음 | 체크박스 해제 + 경고 배너 |
-| OCR 라이브러리 미로드 | 기능 비활성 (회색 처리) |
-| 녹화 중 예외 | 즉시 `stopRecording` + 로그 + 사용자 알림 |
-
-로깅 전략(경량):
-```js
-function log(event, payload = {}) {
-  console.debug(`[LOG:${event}]`, payload);
-}
-```
+### 7.3 Not Implemented Functions (Future)
+- `ocrLoop()`: OCR-based timer detection (optional)
 
 ---
 
-## 8. 성능 고려사항
----
-
-## 8. 에러 처리
-| 상황 | 처리 방식 |
-|------|----------|
-| 화면 공유 권한 거부 | alert: "화면 녹화를 시작할 수 없습니다" |
-| 오디오 트랙 미획득 | 비디오만 녹화 진행, 콘솔 로그 |
-| 자동 종료 입력 오류 | NaN/음수 → 기본값, 180분 초과 → clamp + alert |
-| 녹화 중 스트림 종료 | 자동 stopRecording() 트리거 |
+## 8. Error Handling
+| Situation | Response |
+|-----------|----------|
+| Screen sharing permission denied | alert: "Cannot start screen recording" |
+| Audio track not acquired | Video-only recording proceeds, console log |
+| Auto-stop input error | NaN/negative → default, >180min → clamp + alert |
+| Stream ends during recording | Auto-trigger stopRecording() |
 
 ---
 
-## 9. 성능 고려사항
-| 항목 | 현재 상태 | 향후 개선 |
-|------|-----------|----------|
-| 메모리 | recordedChunks 배열 누적 | 장시간 녹화 시 주기적 flush 검토 |
-| 캔버스 재사용 | 매번 생성 | 전역 캔버스 재사용 (연속 캡처) |
-| DOM 쿼리 | 이벤트마다 getElementById | 초기화 시 캐싱 |
+## 9. Performance Considerations
+| Item | Current State | Future Improvement |
+|------|---------------|-------------------|
+| Memory | recordedChunks array accumulation | Consider periodic flush for long recordings |
+| Canvas Reuse | N/A (screenshot feature removed) | N/A |
+| DOM Queries | getElementById on each event | Cache during initialization |
 
 ---
+
+## 10. Testing Strategy
+| Category | Scenario |
+|----------|----------|
+| Basic Features | (1) Start/stop recording |
+| Auto-stop | Set 5s then verify normal stop, check timer release on manual stop |
+| Audio | Record with audio ON/OFF each, verify fallback when track not acquired |
+| Input Validation | Auto-stop 0m 0s, >180min, NaN input handling |
+| Regression | No impact on existing recording features after new feature addition |
+
+---
+
+## 11. Security & Privacy
+| Item | Content |
+|------|---------|
+| Permissions | Screen sharing + audio (browser prompts) |
+| Data Processing | 100% local processing, no external server transmission |
+| External Dependencies | None (OCR is optional feature, currently not implemented) |
+| DRM Content | Protected content may display as black screen |
+
+---
+
+## 12. Release Plan
+| Version | Status | Main Content |
+|---------|--------|--------------|
+| v1.0 | ✅ Complete | Basic recording |
+| v1.1 | ✅ Complete | Auto-stop + system audio |
+| v1.2 | 📋 Planned | LocalStorage settings persistence, Toast notifications |
+| v1.3 | 📋 Planned | OCR timer detection (experimental) |
+
+---
+
+## 13. Terminology
+| Term | Definition |
+|------|------------|
+| Recording | Captured video file |
+| Auto-stop | Automatic recording termination after set time |
+| System Audio | Tab or full system sound (browser/OS dependent) |
+
+---
+
+## 14. Open Issues / Follow-up Tasks
+| ID | Title | Priority | Status |
+|----|-------|----------|--------|
+| #1 | LocalStorage settings persistence | Medium | Not Started |
+| #2 | Toast notifications (replace alerts) | Medium | Not Started |
+| #3 | Custom video bitrate | Low | Not Started |
+| #4 | Multi-language support (i18n) | Low | Not Started |
+| #5 | OCR screen timer detection | Low | Not Started |
+
+---
+
+## 15. Changelog
+| Date | Version | Changes |
+|------|---------|---------|
+| 2025-10-07 | 1.0 | Initial creation (Baseline + expansion plan) |
+| 2025-10-08 | 1.1 | v1.1 feature completion reflection (auto-stop, audio), English title change, microphone mixing exclusion confirmed, screenshot feature removed, filename changed to Chrome_Recording_Studio.html |
 
 ## 10. 테스트 전략
 ---

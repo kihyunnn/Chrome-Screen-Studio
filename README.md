@@ -1,6 +1,6 @@
-# Screen Capture Studio
+# Chrome Recording Studio
 
-A lightweight, browser-based screen recording and screenshot tool built with pure HTML, CSS, and JavaScript. No server required, no data transmission — everything runs locally in your browser.
+A lightweight, browser-based screen recording tool built with pure HTML, CSS, and JavaScript. No server required, no data transmission — everything runs locally in your browser.
 
 > **Built with Vibe Coding**: Developed using VS Code GitHub Copilot + OpenCode for rapid, iterative development.
 
@@ -14,22 +14,16 @@ A lightweight, browser-based screen recording and screenshot tool built with pur
 - **Live Preview**: Real-time preview while recording with LIVE indicator
 - **Output Format**: WebM video files (VP8/VP9 codec) with `.webm` extension
 
-### 📸 Screenshot Capture
-- **Multiple Formats**: PNG, JPEG, or WebP
-- **Single Capture**: Take instant screenshots
-- **Continuous Mode**: Automatic interval-based screenshots (customizable interval in seconds)
-- **Image Preview**: View captured images with zoom functionality
-
-### 📋 Recording Management
-- **History List**: All recordings and screenshots saved in chronological order
-- **Quick Download**: One-click download for each capture
-- **Preview & Playback**: Review videos and images before downloading
-- **Timestamp Tracking**: Each item tagged with capture date/time and duration
+###  Recording Management
+- **History List**: All recordings saved in chronological order
+- **Quick Download**: One-click download for each recording
+- **Preview & Playback**: Review videos before downloading
+- **Timestamp Tracking**: Each recording tagged with capture date/time and duration
 
 ## 🚀 Quick Start
 
 ### Option 1: Local File
-1. Download `화면 캡처 및 녹화 프로그램.html`
+1. Download `Chrome_Recording_Studio.html`
 2. Open the file in Chrome or Edge browser
 3. Click "녹화 시작" (Start Recording) and grant screen sharing permission
 4. Your recording will be saved locally
@@ -41,12 +35,12 @@ Since this is a static HTML file, you can deploy it anywhere:
 ```bash
 # Create Dockerfile
 FROM nginx:alpine
-COPY 화면\ 캡처\ 및\ 녹화\ 프로그램.html /usr/share/nginx/html/index.html
+COPY Chrome_Recording_Studio.html /usr/share/nginx/html/index.html
 EXPOSE 80
 
 # Build and run
-docker build -t screen-capture-studio .
-docker run -d -p 8080:80 screen-capture-studio
+docker build -t chrome-recording-studio .
+docker run -d -p 8080:80 chrome-recording-studio
 ```
 
 **Using Python HTTP Server:**
@@ -67,19 +61,6 @@ Then access via `http://localhost:8000`
 6. Click "녹화 중지" (Stop Recording) when done
 7. Download from the recording history list
 
-### Taking Screenshots
-1. Select image format (PNG/JPEG/WebP)
-2. Click "스크린샷" (Screenshot)
-3. Select screen/window to capture
-4. Image appears in preview and history list
-
-### Continuous Screenshots
-1. Check "연속 스크린샷 모드" (Continuous Mode)
-2. Set capture interval in seconds
-3. Click "연속 캡처 시작" (Start Continuous)
-4. Each screenshot auto-saves to history
-5. Click "연속 캡처 중지" (Stop Continuous) to end
-
 ## 🛠️ Technical Details
 
 ### Browser Compatibility
@@ -90,14 +71,12 @@ Then access via `http://localhost:8000`
 ### APIs Used
 - `navigator.mediaDevices.getDisplayMedia()` - Screen capture
 - `MediaRecorder` - Video encoding
-- `Canvas API` - Screenshot rendering
 - `Blob` & `URL.createObjectURL()` - File generation
 
 ### File Formats
 | Type | Format | Extension | Details |
 |------|--------|-----------|---------|
 | Video | WebM | `.webm` | VP8/VP9 codec, variable bitrate |
-| Screenshot | PNG/JPEG/WebP | `.png` / `.jpg` / `.webp` | User-selectable |
 
 ### Privacy & Security
 - ✅ **100% Local Processing**: No data sent to any server
@@ -108,14 +87,15 @@ Then access via `http://localhost:8000`
 ## 📐 Architecture
 
 ```
-Single HTML File
-├── Inline CSS (Dark Theme)
+Single HTML File (Chrome_Recording_Studio.html)
+├── Inline CSS (Modern Dark Theme with Gradients)
+├── Font Awesome Icons
+├── Noto Sans KR Font
 ├── Vanilla JavaScript
 │   ├── MediaRecorder Management
 │   ├── Timer & Auto-Stop Logic
-│   ├── Screenshot Canvas Processing
 │   └── UI State Management
-└── No External Dependencies
+└── No External Dependencies (except fonts/icons CDN)
 ```
 
 ## ⚙️ Configuration
@@ -152,7 +132,7 @@ Single HTML File
 
 4. **Browser Volume**: If Chrome is muted in system mixer, audio won't be captured
 
-## 🔮 Roadmap
+## � Roadmap
 
 - [ ] LocalStorage settings persistence
 - [ ] Toast notifications (replace alerts)
@@ -160,9 +140,9 @@ Single HTML File
 - [ ] Video bitrate customization
 - [ ] Multi-language support (i18n)
 
-## 📄 Documentation
+## �📄 Documentation
 
-- `PRD_화면녹화도구.md` - Product Requirements Document (Korean)
+- `Screen Capture Studio - PRD.md` - Product Requirements Document (English)
 - `TASKS_타이머_오디오기능.md` - Implementation Task List (Korean)
 
 ## 🤝 Contributing
@@ -178,7 +158,8 @@ MIT License - Feel free to use and modify
 Built with:
 - **Vibe Coding Workflow**: VS Code GitHub Copilot + OpenCode for AI-assisted pair programming
 - Chrome DevTools Media APIs
-- Do Hyeon Font (Google Fonts)
+- Font Awesome Icons
+- Noto Sans KR Font (Google Fonts)
 - Pure vanilla JavaScript (no frameworks!)
 
 ---
