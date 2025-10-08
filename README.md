@@ -2,6 +2,8 @@
 
 A lightweight, browser-based screen recording and screenshot tool built with pure HTML, CSS, and JavaScript. No server required, no data transmission — everything runs locally in your browser.
 
+> **Built with Vibe Coding**: Developed using VS Code GitHub Copilot + OpenCode for rapid, iterative development.
+
 ## ✨ Features
 
 ### 🎥 Screen Recording
@@ -10,7 +12,7 @@ A lightweight, browser-based screen recording and screenshot tool built with pur
 - **System Audio Capture**: Record screen with tab/system audio (browser-dependent)
 - **Auto-Stop Timer**: Set automatic recording duration (up to 180 minutes)
 - **Live Preview**: Real-time preview while recording with LIVE indicator
-- **WebM Format**: Outputs in WebM format (VP8/VP9 codec)
+- **Output Format**: WebM video files (VP8/VP9 codec) with `.webm` extension
 
 ### 📸 Screenshot Capture
 - **Multiple Formats**: PNG, JPEG, or WebP
@@ -92,10 +94,10 @@ Then access via `http://localhost:8000`
 - `Blob` & `URL.createObjectURL()` - File generation
 
 ### File Formats
-| Type | Format | Details |
-|------|--------|---------|
-| Video | WebM | VP8/VP9 codec, variable bitrate |
-| Screenshot | PNG/JPEG/WebP | User-selectable |
+| Type | Format | Extension | Details |
+|------|--------|-----------|---------|
+| Video | WebM | `.webm` | VP8/VP9 codec, variable bitrate |
+| Screenshot | PNG/JPEG/WebP | `.png` / `.jpg` / `.webp` | User-selectable |
 
 ### Privacy & Security
 - ✅ **100% Local Processing**: No data sent to any server
@@ -174,6 +176,7 @@ MIT License - Feel free to use and modify
 ## 🙏 Acknowledgments
 
 Built with:
+- **Vibe Coding Workflow**: VS Code GitHub Copilot + OpenCode for AI-assisted pair programming
 - Chrome DevTools Media APIs
 - Do Hyeon Font (Google Fonts)
 - Pure vanilla JavaScript (no frameworks!)

@@ -19,11 +19,11 @@
 - 모달: 스크린샷 확대 표시
 
 ### 2.2 상태 관리 (전역 변수)
-- `mediaRecorder`, `recordedChunks`, `stream`, `continuousStream`
-- 카운터: `recordingCount`, `screenshotCount`
-- 타이머: `timerInterval`, `continuousInterval`, `autoStopTimeoutId`
-- 기능 플래그: `autoStopEnabled`, `audioEnabled`
-- UI 상태: 녹화 여부(버튼 enable/disable), LIVE 뱃지, 빈 상태 메시지 표시 여부
+- **미디어**: `mediaRecorder`, `recordedChunks`, `stream`, `continuousStream`
+- **카운터**: `recordingCount`, `screenshotCount`, `hasRecordings`
+- **타이머**: `timerInterval`, `continuousInterval`, `autoStopTimeoutId`, `autoStopDeadline`, `startTime`
+- **기능 플래그**: `autoStopEnabled`, `audioEnabled`, `micMixEnabled` (예약됨)
+- **UI 상태**: 녹화 여부(버튼 enable/disable), LIVE 뱃지, 빈 상태 메시지 표시
 
 ### 2.3 주요 흐름
 1. Start Recording → `getDisplayMedia` → `MediaRecorder` 시작 → 실시간 프리뷰 표시
@@ -128,12 +128,15 @@
 ### 7.2 구현 완료 함수
 | 함수 | 역할 |
 |------|------|
-| `calcAutoStopMs(m, s)` | 입력 검증 (0~180분 clamping, NaN 처리) |
-| `scheduleAutoStop(ms)` | setTimeout 예약, 기존 예약 clear |
-| `clearAutoStop()` | 타이머 해제 |
-| `createDisplayStream({ audio })` | getDisplayMedia 호출, 오디오 옵션 포함 |
+| `calcAutoStopMs(m, s)` | 입력 검증 (0~180분 clamping, NaN 처리), clamp 알림 |
+| `scheduleAutoStop(ms)` | setTimeout 예약, 기존 예약 clear, deadline 설정 |
+| `clearAutoStop()` | 타이머 해제, deadline 초기화 |
+| `createDisplayStream({ audio })` | getDisplayMedia 호출, 오디오 옵션 포함, 트랙 확인 |
 | `formatTime(sec)` | MM:SS 포맷 변환 |
-| `addToList(type, url, name, time, detail)` | 기록 리스트 추가 (video/_av, screenshot) |
+| `addToList(type, url, name, time, detail)` | 기록 리스트 추가 (video/_av/_v, screenshot) |
+| `startRecording()` | 녹화 시작, 자동 종료 예약, 오디오 스트림 획득 |
+| `stopRecording()` | 녹화 중지, 자동 종료 해제, 스트림 정리 |
+| `startTimer()` | 녹화 타이머 UI 업데이트, 남은 시간 표시 (60초↓ orange, 10초↓ red) |
 
 ### 7.3 미구현 함수 (향후)
 - `mixAudioStreams()`: 마이크 + 시스템 오디오 믹싱 (제외됨)
