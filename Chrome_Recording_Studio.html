@@ -1292,40 +1292,7 @@
             text-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
         }
 
-        /* 툴팁 */
-        .tooltip {
-            position: relative;
-        }
 
-        .tooltip::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            right: 0;
-            transform: translateY(-8px) rotate(-15deg);
-            transform-origin: bottom right;
-            background: var(--bg-tertiary);
-            color: var(--text-primary);
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            white-space: normal;
-            max-width: 280px;
-            width: max-content;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            border: 1px solid var(--border-accent);
-            z-index: 10000;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        .tooltip:hover::after {
-            opacity: 1;
-            transform: translateY(-12px) rotate(-15deg);
-        }
 
         /* 반응형 미디어 쿼리 */
         
