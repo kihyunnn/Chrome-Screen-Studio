@@ -2088,7 +2088,6 @@
                 <p>모든 녹화에는 자동으로 오디오가 포함됩니다. 별도의 체크박스 설정이 필요하지 않습니다.</p>
                 <ul>
                     <li>Windows Chrome/Edge: 시스템 오디오 지원</li>
-                    <li>macOS: 탭 오디오로 제한</li>
                     <li>브라우저가 시스템 믹서에서 음소거된 경우 녹음되지 않음</li>
                 </ul>
             </div>
@@ -2126,7 +2125,8 @@
                 <h3><i class="fas fa-robot"></i> Gemini 업로드</h3>
                 <p>WebM 형식은 Google Gemini와 완벽하게 호환됩니다.</p>
                 <ul>
-                    <li>30분 이상 긴 영상도 WebM으로 안정적 업로드 가능</li>
+                    <li>1시간이 제한인데, 40분 영상도 안올라가는 경우 확인. 이상 긴 영상도 WebM으로 안정적 업로드 가능</li>
+                    <li>긴 영상은 분할 버전으로 업로드 추천</li>
                     <li>MP3 변환 없이 바로 사용 가능</li>
                     <li>영상 + 오디오 동시 분석 가능</li>
                 </ul>
@@ -3073,8 +3073,6 @@
                             this.disabled = true;
                             delete this.dataset.mp3Url;
                         }
-                    } else if (state === 'ready') {
-                        startAutoMp3Conversion(item, url);
                     }
                 });
             }
@@ -3091,6 +3089,8 @@
                         mp3ConvertBtn.dataset.state = 'ready';
                         mp3ConvertBtn.textContent = 'MP3 변환';
                         mp3ConvertBtn.disabled = false;
+                        
+                        startAutoMp3Conversion(item, url);
                     }
                 });
             }
