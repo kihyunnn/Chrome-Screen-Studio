@@ -2509,12 +2509,6 @@
             allRecordedChunks.push(...recordedChunks);
 
             mediaRecorder.stop();
-
-            currentPartNumber++;
-
-            await restartRecording();
-            
-            isAutoSplitting = false;
         }
 
         async function restartRecording() {
@@ -2878,10 +2872,12 @@
             autoStopRemainWrapper.style.display = 'none';
             autoStopRemain.textContent = '00:00';
 
-            // 수동 종료 시 baseName과 partNumber, allRecordedChunks 초기화
-            baseName = '';
-            currentPartNumber = 1;
-            allRecordedChunks = [];
+            // 자동 분할이 아닐 때만 초기화 (최종 종료 시에만)
+            if (!isAutoSplitting) {
+                baseName = '';
+                currentPartNumber = 1;
+                allRecordedChunks = [];
+            }
 
             if (reason === 'AUTO_STOP' && wasRecording) {
                 notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
@@ -2897,6 +2893,11 @@
             console.log('[DEBUG] handleRecordingStop() called');
             console.log('[DEBUG] recordedChunks length:', recordedChunks.length);
             console.log('[DEBUG] recordedChunks:', recordedChunks);
+            
+            // 상태 캡처 (외부에서 초기화되기 전에 저장)
+            const isAutoSplit = isAutoSplitting;
+            const partNumber = currentPartNumber;
+            const accumulatedChunks = [...allRecordedChunks];
             
             const blob = new Blob(recordedChunks, { type: 'video/webm' });
             console.log('[DEBUG] Blob created, size:', blob.size);
@@ -2920,8 +2921,8 @@
             const duration = Math.floor((Date.now() - startTime) / 1000);
             const timestamp = new Date().toLocaleString('ko-KR');
             
-            // 자동 분할 시 baseName_part1, part2... 형식 사용
-            const fileName = baseName ? `${baseName}_part${currentPartNumber}` : `녹화 ${recordingCount}_${lastRecordingHadAudio ? 'av' : 'v'}`;
+            // 자동 분할 시 baseName_part1, part2... 형식 사용 (캡처된 partNumber 사용)
+            const fileName = baseName ? `${baseName}_part${partNumber}` : `녹화 ${recordingCount}_${lastRecordingHadAudio ? 'av' : 'v'}`;
             
             console.log('[DEBUG] Calling addToList with:', {
                 type: 'video',
@@ -2932,10 +2933,10 @@
             });
             
             // 다중 파트 녹화 완료 시 자동으로 분할 파일과 전체 파일 모두 저장
-            if (!isAutoSplitting && currentPartNumber > 1) {
-                allRecordedChunks.push(...recordedChunks);
+            if (!isAutoSplit && partNumber > 1) {
+                const allChunks = [...accumulatedChunks, ...recordedChunks];
                 
-                const fullBlob = new Blob(allRecordedChunks, { type: 'video/webm' });
+                const fullBlob = new Blob(allChunks, { type: 'video/webm' });
                 const fullUrl = URL.createObjectURL(fullBlob);
                 
                 recordingUrls.push(fullUrl);
@@ -2954,6 +2955,15 @@
             } else {
                 addToList('video', url, fileName, timestamp, formatTime(duration), duration);
                 console.log('[DEBUG] Single part - added to list');
+            }
+
+            // 자동 분할 중이라면 녹화 재시작
+            if (isAutoSplit) {
+                console.log('[AUTO-SPLIT] 자동 분할로 인한 정지, 녹화 재시작');
+                currentPartNumber++;
+                await restartRecording();
+                isAutoSplitting = false;
+                console.log('[AUTO-SPLIT] 녹화 재시작 완료, isAutoSplitting = false');
             }
         }
 
