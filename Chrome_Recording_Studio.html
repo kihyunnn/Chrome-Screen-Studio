@@ -1538,115 +1538,6 @@
         }
 
         /* 저장 옵션 선택 모달 */
-        .save-options-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .save-options-modal.show {
-            display: flex;
-        }
-
-        .save-options-content {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 520px;
-            width: 90%;
-            border: 1px solid var(--border-primary);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
-            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .save-options-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .save-options-title i {
-            color: var(--accent-blue);
-        }
-
-        .save-options-description {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .save-option-btn {
-            width: 100%;
-            padding: 18px 24px;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, var(--bg-accent), var(--bg-hover));
-            border: 2px solid var(--border-primary);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .save-option-btn:hover {
-            background: linear-gradient(135deg, var(--bg-hover), var(--bg-accent));
-            border-color: var(--accent-blue);
-            transform: translateX(5px);
-            box-shadow: 0 4px 20px rgba(76, 154, 255, 0.3);
-        }
-
-        .save-option-btn i {
-            font-size: 20px;
-            color: var(--accent-blue);
-        }
-
-        .save-option-btn .option-text {
-            flex: 1;
-            text-align: left;
-        }
-
-        .save-option-btn .option-title {
-            display: block;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .save-option-btn .option-desc {
-            display: block;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
         /* 토스트 알림 - 개선된 스타일 */
         .toast-container {
             position: fixed;
@@ -2056,7 +1947,6 @@
                 </div>
                 <div class="timer-wrapper">
                     <div class="timer" id="timer">00:00</div>
-                    <div class="part-indicator" id="partIndicator" style="display: none;">Part 1</div>
                 </div>
             </div>
 
@@ -2090,43 +1980,6 @@
     <!-- 토스트 알림 컨테이너 -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- 저장 옵션 선택 모달 -->
-    <div class="save-options-modal" id="saveOptionsModal">
-        <div class="save-options-content">
-            <div class="save-options-title">
-                <i class="fas fa-save"></i>
-                녹화 저장 옵션 선택
-            </div>
-            <div class="save-options-description">
-                30분 이상 녹화되어 자동 분할되었습니다. 어떤 방식으로 저장하시겠습니까?
-            </div>
-            
-            <button class="save-option-btn" data-option="parts">
-                <i class="fas fa-layer-group"></i>
-                <div class="option-text">
-                    <span class="option-title">분할 영상만 저장</span>
-                    <span class="option-desc">30분 단위로 나뉜 파일들만 저장합니다</span>
-                </div>
-            </button>
-            
-            <button class="save-option-btn" data-option="full">
-                <i class="fas fa-film"></i>
-                <div class="option-text">
-                    <span class="option-title">전체 영상만 저장</span>
-                    <span class="option-desc">전체가 합쳐진 하나의 파일만 저장합니다</span>
-                </div>
-            </button>
-            
-            <button class="save-option-btn" data-option="both">
-                <i class="fas fa-copy"></i>
-                <div class="option-text">
-                    <span class="option-title">둘 다 저장</span>
-                    <span class="option-desc">분할 영상과 전체 영상 모두 저장합니다</span>
-                </div>
-            </button>
-        </div>
-    </div>
-
     <!-- 사용설명서 모달 -->
     <div class="user-manual-modal" id="userManualModal">
         <div class="user-manual-content">
@@ -2149,13 +2002,6 @@
                 </ul>
             </div>
 
-            <div class="user-manual-section">
-                <h3><i class="fas fa-scissors"></i> 30분 자동 분할</h3>
-                <p>메모리 안정성을 위해 모든 녹화는 30분마다 자동으로 분할됩니다.</p>
-                <div class="user-manual-info">
-                    <p><strong>저장 :</strong> 30분 이상 녹화 시 자동으로 분할 버전과 전체 버전이 저장됩니다</p>
-                </div>
-            </div>
 
             <div class="user-manual-section">
                 <h3><i class="fas fa-music"></i> WebM 오디오 추출</h3>
@@ -2173,17 +2019,13 @@
                 <div class="user-manual-warning">
                     <p><strong>중요:</strong> 20분 이상 영상의 MP3 변환은 브라우저 메모리 부담으로 느려지거나 실패할 수 있습니다.</p>
                 </div>
-                <div class="user-manual-info">
-                    <p><strong>권장사항:</strong> 30분 이상 긴 영상은 WebM 형식 그대로 Gemini에 업로드하는 것을 권장합니다.</p>
-                </div>
             </div>
 
             <div class="user-manual-section">
                 <h3><i class="fas fa-robot"></i> Gemini 업로드</h3>
                 <p>WebM 형식은 Google Gemini와 완벽하게 호환됩니다.</p>
                 <ul>
-                    <li>1시간이 제한인데, 40분 영상도 안올라가는 경우 확인. 이상 긴 영상도 WebM으로 안정적 업로드 가능</li>
-                    <li>긴 영상은 분할 버전으로 업로드 추천</li>
+                    <li>긴 영상도 WebM으로 안정적 업로드 가능</li>
                     <li>MP3 변환 없이 바로 사용 가능</li>
                     <li>영상 + 오디오 동시 분석 가능</li>
                 </ul>
@@ -2215,14 +2057,6 @@
         let hasRecordings = false;
         let autoStopTimeoutId = null;
         let autoStopDeadline = null;
-
-        // 30분 자동 분할 관련 변수
-        let autoSplitEnabled = true; // 항상 활성화
-        let autoSplitIntervalMs = 30 * 60 * 1000; // 30분 = 1800000ms
-        let autoSplitTimeoutId = null;
-        let currentPartNumber = 1; // 현재 파일 파트 번호
-        let baseName = ''; // 녹화 시작 시 결정되는 기본 파일명
-        let allRecordedChunks = []; // 전체 녹화 세션의 모든 청크 누적
 
         // ===== Debug & State Enhancements =====
         const DEBUG = false; // 필요 시 true로 변경하여 상세 로그 확인
@@ -2258,7 +2092,6 @@
         let autoStopEnabled = false;
         let audioEnabled = true;
         let micMixEnabled = false;
-        let isAutoSplitting = false;
 
 
         // DOM 요소
@@ -2270,7 +2103,6 @@
         const statusText = document.getElementById('statusText');
         const statusDot = document.getElementById('statusDot');
         const timer = document.getElementById('timer');
-        const partIndicator = document.getElementById('partIndicator');
         const recordingsList = document.getElementById('recordingsList');
         const emptyPreview = document.getElementById('emptyPreview');
         const liveBadge = document.getElementById('liveBadge');
@@ -2280,7 +2112,7 @@
         const autoStopSecondsInput = document.getElementById('autoStopSeconds');
         const autoStopRemainWrapper = document.getElementById('autoStopRemainWrapper');
         const autoStopRemain = document.getElementById('autoStopRemain');
-        const saveOptionsModal = document.getElementById('saveOptionsModal');
+
 
         // 화질 설정
 
@@ -2477,102 +2309,6 @@
             autoStopDeadline = null;
         }
 
-        // 30분 자동 분할 함수들
-        function scheduleAutoSplit() {
-            clearAutoSplit();
-            if (!autoSplitEnabled || !autoSplitIntervalMs || autoSplitIntervalMs <= 0) {
-                return;
-            }
-
-            autoSplitTimeoutId = setTimeout(() => {
-                autoSplitTimeoutId = null;
-                performAutoSplit();
-            }, autoSplitIntervalMs);
-        }
-
-        function clearAutoSplit() {
-            if (autoSplitTimeoutId) {
-                clearTimeout(autoSplitTimeoutId);
-                autoSplitTimeoutId = null;
-            }
-        }
-
-        async function performAutoSplit() {
-            if (!mediaRecorder || mediaRecorder.state !== 'recording') {
-                return;
-            }
-
-            console.log(`[AUTO-SPLIT] 30분 도달, Part ${currentPartNumber} 저장 시작`);
-
-            isAutoSplitting = true;
-
-            allRecordedChunks.push(...recordedChunks);
-
-            mediaRecorder.stop();
-        }
-
-        async function restartRecording() {
-            if (!stream) {
-                console.error('[AUTO-SPLIT] stream이 존재하지 않아 재시작 불가');
-                return;
-            }
-
-            try {
-                // 기존 설정 재사용
-                const recorderOptions = {
-                    mimeType: 'video/webm'
-                };
-
-                const preferredMimeTypes = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
-                const canCheckMimeSupport = typeof MediaRecorder !== 'undefined' && typeof MediaRecorder.isTypeSupported === 'function';
-                const supportedMime = canCheckMimeSupport
-                    ? preferredMimeTypes.find(type => MediaRecorder.isTypeSupported(type))
-                    : 'video/webm';
-                recorderOptions.mimeType = supportedMime ?? null;
-
-                let recorderConfig = { ...recorderOptions };
-                if (!recorderConfig.mimeType) {
-                    delete recorderConfig.mimeType;
-                }
-
-                try {
-                    mediaRecorder = new MediaRecorder(stream, recorderConfig);
-                } catch (error) {
-                    if (recorderConfig.mimeType) {
-                        delete recorderConfig.mimeType;
-                        mediaRecorder = new MediaRecorder(stream, recorderConfig);
-                    } else {
-                        throw error;
-                    }
-                }
-
-                recordedChunks = [];
-                console.log(`[AUTO-SPLIT] recordedChunks 초기화, Part ${currentPartNumber} 시작`);
-
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                        console.log('[DEBUG] Data chunk received, size:', event.data.size, 'total chunks:', recordedChunks.length);
-                    }
-                };
-
-                mediaRecorder.onstop = handleRecordingStop;
-
-                mediaRecorder.start();
-                console.log(`[AUTO-SPLIT] Part ${currentPartNumber} 녹화 시작`);
-
-                // Part 인디케이터 업데이트
-                partIndicator.textContent = `Part ${currentPartNumber}`;
-
-                // 다음 30분 타이머 설정
-                scheduleAutoSplit();
-
-            } catch (error) {
-                console.error('[AUTO-SPLIT] 재시작 실패:', error);
-                notify('error', '자동 분할 중 오류가 발생했습니다.');
-                stopRecording();
-            }
-        }
 
         function updateAutoStopRemain(remainingMs) {
             const clampedMs = Math.max(0, remainingMs);
@@ -2705,13 +2441,8 @@
                 const { stream: capturedStream, settings } = await createDisplayStream({ audio: audioEnabled });
                 stream = capturedStream;
 
-                // 자동 분할용 기본 파일명 생성 (녹화 시작 시점에 고정)
                 recordingCount++;
-                const suffix = audioEnabled ? '_av' : '_v';
-                baseName = `녹화 ${recordingCount}${suffix}`;
-                currentPartNumber = 1;
 
-                // 라이브 미리보기 시작
                 livePreview.srcObject = stream;
                 livePreview.style.display = 'block';
                 preview.style.display = 'none';
@@ -2771,18 +2502,7 @@
                 statusText.textContent = '녹화 중';
                 statusDot.classList.add('recording');
                 
-                // Part 인디케이터 표시
-                partIndicator.textContent = `Part ${currentPartNumber}`;
-                partIndicator.style.display = 'block';
-                
                 startTimer();
-
-                // Start 버튼 툴팁 제거
-                startRecordBtn.classList.remove('tooltip');
-                startRecordBtn.removeAttribute('data-tooltip');
-
-                // 자동 분할 타이머 시작 (30분)
-                scheduleAutoSplit();
 
                 if (autoStopEnabled) {
                     const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
@@ -2859,25 +2579,12 @@
             stopRecordBtn.disabled = true;
             statusText.textContent = '대기 중';
             statusDot.classList.remove('recording');
-            clearInterval(timerInterval);
-            timerInterval = null;
             timer.textContent = '00:00';
-            
-            // Part 인디케이터 숨기기
-            partIndicator.style.display = 'none';
 
 
             clearAutoStop();
-            clearAutoSplit(); // 자동 분할 타이머도 정리
             autoStopRemainWrapper.style.display = 'none';
             autoStopRemain.textContent = '00:00';
-
-            // 자동 분할이 아닐 때만 초기화 (최종 종료 시에만)
-            if (!isAutoSplitting) {
-                baseName = '';
-                currentPartNumber = 1;
-                allRecordedChunks = [];
-            }
 
             if (reason === 'AUTO_STOP' && wasRecording) {
                 notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
@@ -2894,18 +2601,12 @@
             console.log('[DEBUG] recordedChunks length:', recordedChunks.length);
             console.log('[DEBUG] recordedChunks:', recordedChunks);
             
-            // 상태 캡처 (외부에서 초기화되기 전에 저장)
-            const isAutoSplit = isAutoSplitting;
-            const partNumber = currentPartNumber;
-            const accumulatedChunks = [...allRecordedChunks];
-            
             const blob = new Blob(recordedChunks, { type: 'video/webm' });
             console.log('[DEBUG] Blob created, size:', blob.size);
             
             const url = URL.createObjectURL(blob);
             console.log('[DEBUG] URL created:', url);
 
-            // 생성 URL 추적 및 오래된 것 정리 (최대 20개)
             recordingUrls.push(url);
             const MAX_URLS = 20;
             while (recordingUrls.length > MAX_URLS) {
@@ -2921,8 +2622,7 @@
             const duration = Math.floor((Date.now() - startTime) / 1000);
             const timestamp = new Date().toLocaleString('ko-KR');
             
-            // 자동 분할 시 baseName_part1, part2... 형식 사용 (캡처된 partNumber 사용)
-            const fileName = baseName ? `${baseName}_part${partNumber}` : `녹화 ${recordingCount}_${lastRecordingHadAudio ? 'av' : 'v'}`;
+            const fileName = `녹화 ${recordingCount}_${lastRecordingHadAudio ? 'av' : 'v'}`;
             
             console.log('[DEBUG] Calling addToList with:', {
                 type: 'video',
@@ -2932,39 +2632,8 @@
                 duration: formatTime(duration)
             });
             
-            // 다중 파트 녹화 완료 시 자동으로 분할 파일과 전체 파일 모두 저장
-            if (!isAutoSplit && partNumber > 1) {
-                const allChunks = [...accumulatedChunks, ...recordedChunks];
-                
-                const fullBlob = new Blob(allChunks, { type: 'video/webm' });
-                const fullUrl = URL.createObjectURL(fullBlob);
-                
-                recordingUrls.push(fullUrl);
-                while (recordingUrls.length > MAX_URLS) {
-                    const old = recordingUrls.shift();
-                    try { URL.revokeObjectURL(old); } catch(_){}
-                }
-                
-                const fullFileName = `${baseName} (전체)`;
-                const totalDuration = Math.floor((Date.now() - startTime) / 1000);
-                
-                // 모달 없이 자동으로 둘 다 저장
-                addToList('video', url, fileName, timestamp, formatTime(duration), duration);
-                addToList('video', fullUrl, fullFileName, timestamp, formatTime(totalDuration), totalDuration);
-                console.log('[DEBUG] Auto-saved both - split and merged videos added');
-            } else {
-                addToList('video', url, fileName, timestamp, formatTime(duration), duration);
-                console.log('[DEBUG] Single part - added to list');
-            }
-
-            // 자동 분할 중이라면 녹화 재시작
-            if (isAutoSplit) {
-                console.log('[AUTO-SPLIT] 자동 분할로 인한 정지, 녹화 재시작');
-                currentPartNumber++;
-                await restartRecording();
-                isAutoSplitting = false;
-                console.log('[AUTO-SPLIT] 녹화 재시작 완료, isAutoSplitting = false');
-            }
+            addToList('video', url, fileName, timestamp, formatTime(duration), duration);
+            console.log('[DEBUG] Added to list');
         }
 
 
@@ -3174,25 +2843,6 @@
                     }
                 }
             }, 1000);
-        }
-
-        function showSaveOptionsModal() {
-            return new Promise((resolve) => {
-                saveOptionsModal.style.display = 'flex';
-                
-                const buttons = saveOptionsModal.querySelectorAll('.save-option-btn');
-                
-                const handleChoice = (e) => {
-                    const option = e.currentTarget.dataset.option;
-                    saveOptionsModal.style.display = 'none';
-                    buttons.forEach(btn => btn.removeEventListener('click', handleChoice));
-                    resolve(option);
-                };
-                
-                buttons.forEach(btn => {
-                    btn.addEventListener('click', handleChoice);
-                });
-            });
         }
 
 
@@ -3434,7 +3084,7 @@
         console.log('');
 
         // MP3 변환 유틸리티
-        async function extractAudioAsWebM(videoBlob) {
+        async function extractAudioAsWebM(videoBlob, onProgress = null) {
             console.log('[Audio Extract] Video blob size:', videoBlob.size, 'type:', videoBlob.type);
             
             const videoUrl = URL.createObjectURL(videoBlob);
@@ -3485,6 +3135,7 @@
 
             const audioChunks = [];
             let finished = false;
+            let progressInterval = null;
 
             return new Promise(async (resolve, reject) => {
                 recorder.ondataavailable = (e) => {
@@ -3494,6 +3145,7 @@
                 recorder.onstop = () => {
                     if (finished) return;
                     finished = true;
+                    if (progressInterval) clearInterval(progressInterval);
                     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                     try { URL.revokeObjectURL(videoUrl); } catch (_) {}
                     try { audioContext.close(); } catch (_) {}
@@ -3503,6 +3155,7 @@
                 recorder.onerror = (err) => {
                     if (finished) return;
                     finished = true;
+                    if (progressInterval) clearInterval(progressInterval);
                     try { URL.revokeObjectURL(videoUrl); } catch (_) {}
                     try { audioContext.close(); } catch (_) {}
                     reject(err);
@@ -3529,7 +3182,17 @@
                     }
                 }
 
+                if (onProgress && video.duration > 0) {
+                    progressInterval = setInterval(() => {
+                        if (video.duration > 0) {
+                            const percent = Math.min(100, Math.floor((video.currentTime / video.duration) * 100));
+                            onProgress(percent);
+                        }
+                    }, 200);
+                }
+
                 video.onended = () => {
+                    if (progressInterval) clearInterval(progressInterval);
                     try { recorder.stop(); } catch (_) {}
                 };
             });
@@ -3544,7 +3207,8 @@
             
             if (state === 'loading') {
                 mp3Btn.classList.add('loading');
-                mp3Btn.textContent = 'WebM 오디오 추출 중…';
+                const message = data.message || 'WebM 오디오 추출 중 0%';
+                mp3Btn.textContent = message;
                 mp3Btn.disabled = true;
                 mp3Btn.removeAttribute('data-mp3-url');
             } else if (state === 'ready') {
@@ -3554,7 +3218,6 @@
                 mp3Btn.dataset.mp3Url = data.url;
                 mp3Btn.dataset.filename = data.filename;
 
-                // Track and cap audio object URLs
                 if (data.url) {
                     audioUrls.push(data.url);
                     const MAX_URLS = 20;
@@ -3574,7 +3237,6 @@
                     a.download = filename + '.webm';
                     a.click();
 
-                    // Revoke after download and disable button
                     setTimeout(() => {
                         try { URL.revokeObjectURL(url); } catch (_) {}
                         const idx = audioUrls.indexOf(url);
@@ -3602,13 +3264,15 @@
             if (!mp3Btn) return;
             
             mp3Btn.dataset.videoUrl = videoUrl;
-            updateMp3ButtonState(item, 'loading', { message: '오디오 추출 중…' });
+            updateMp3ButtonState(item, 'loading', { message: 'WebM 오디오 추출 중 0%' });
             
             try {
                 const response = await fetch(videoUrl);
                 const videoBlob = await response.blob();
                 
-                const audioBlob = await extractAudioAsWebM(videoBlob);
+                const audioBlob = await extractAudioAsWebM(videoBlob, (percent) => {
+                    updateMp3ButtonState(item, 'loading', { message: `WebM 오디오 추출 중 ${percent}%` });
+                });
                 
                 const audioUrl = URL.createObjectURL(audioBlob);
                 const nameElement = item.querySelector('.recording-name');
@@ -3622,7 +3286,6 @@
 
                 if (error && error.code === 'AUTOPLAY_BLOCKED') {
                     notify('warn', '브라우저가 자동 재생을 차단했습니다. 화면을 클릭/터치하면 자동으로 재시도합니다.');
-                    // Show waiting state and disable manual retries to prevent double calls
                     updateMp3ButtonState(item, 'loading', { message: '자동 재시도 대기 중… 화면을 클릭/터치하세요' });
 
                     if (!autoplayNudgeHandler) {
