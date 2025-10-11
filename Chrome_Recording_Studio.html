@@ -1183,11 +1183,29 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            position: relative;
         }
 
         .download-btn:hover {
             background: linear-gradient(135deg, #059669, #047857);
             box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .download-btn.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .download-btn.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
         }
 
         .mp3-btn {
@@ -1203,6 +1221,7 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+            position: relative;
         }
 
         .mp3-btn.loading {
@@ -1241,6 +1260,23 @@
 
         .mp3-btn.ready:active {
             transform: translateY(0);
+        }
+
+        .mp3-btn.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .mp3-btn.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
         }
 
         .mp3-btn.failed {
@@ -1353,6 +1389,23 @@
             background: linear-gradient(135deg, #059669, #047857);
             transform: translateY(-2px) scale(1.05);
             box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .mp3-convert-btn.completed {
+            background: linear-gradient(135deg, #10b981, #059669);
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .mp3-convert-btn.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
         }
 
         /* 확대 모달 */
@@ -2096,7 +2149,7 @@
                 <h3><i class="fas fa-scissors"></i> 30분 자동 분할</h3>
                 <p>메모리 안정성을 위해 모든 녹화는 30분마다 자동으로 분할됩니다.</p>
                 <div class="user-manual-info">
-                    <p><strong>저장 옵션:</strong> 30분 이상 녹화 시 파트만/전체만/둘 다 저장 중 선택 가능</p>
+                    <p><strong>저장 :</strong> 30분 이상 녹화 시 자동으로 분할 버전과 전체 버전이 저장됩니다</p>
                 </div>
             </div>
 
@@ -2874,7 +2927,7 @@
                 duration: formatTime(duration)
             });
             
-            // 다중 파트 녹화 완료 시 사용자에게 저장 옵션 선택 모달 표시
+            // 다중 파트 녹화 완료 시 자동으로 분할 파일과 전체 파일 모두 저장
             if (!isAutoSplitting && currentPartNumber > 1) {
                 allRecordedChunks.push(...recordedChunks);
                 
@@ -2890,19 +2943,10 @@
                 const fullFileName = `${baseName} (전체)`;
                 const totalDuration = Math.floor((Date.now() - startTime) / 1000);
                 
-                const userChoice = await showSaveOptionsModal();
-                
-                if (userChoice === 'parts') {
-                    addToList('video', url, fileName, timestamp, formatTime(duration), duration);
-                    console.log('[DEBUG] Parts only - split video added');
-                } else if (userChoice === 'full') {
-                    addToList('video', fullUrl, fullFileName, timestamp, formatTime(totalDuration), totalDuration);
-                    console.log('[DEBUG] Full only - merged video added');
-                } else if (userChoice === 'both') {
-                    addToList('video', url, fileName, timestamp, formatTime(duration), duration);
-                    addToList('video', fullUrl, fullFileName, timestamp, formatTime(totalDuration), totalDuration);
-                    console.log('[DEBUG] Both - split and merged videos added');
-                }
+                // 모달 없이 자동으로 둘 다 저장
+                addToList('video', url, fileName, timestamp, formatTime(duration), duration);
+                addToList('video', fullUrl, fullFileName, timestamp, formatTime(totalDuration), totalDuration);
+                console.log('[DEBUG] Auto-saved both - split and merged videos added');
             } else {
                 addToList('video', url, fileName, timestamp, formatTime(duration), duration);
                 console.log('[DEBUG] Single part - added to list');
@@ -2978,9 +3022,7 @@
                         if (idx >= 0) recordingUrls.splice(idx, 1);
                     }, 1000);
 
-                    this.textContent = '다운로드됨';
-                    this.style.pointerEvents = 'none';
-                    this.style.opacity = '0.6';
+                    this.classList.add('completed');
                 });
             }
             
@@ -3069,8 +3111,7 @@
                             a.download = `${recordingName}.mp3`;
                             a.click();
                             
-                            this.innerHTML = '<i class="fas fa-check"></i> MP3 다운로드 완료';
-                            this.disabled = true;
+                            this.classList.add('completed');
                             delete this.dataset.mp3Url;
                         }
                     }
@@ -3526,7 +3567,7 @@
                         if (idx >= 0) audioUrls.splice(idx, 1);
                     }, 1000);
 
-                    mp3Btn.textContent = 'WebM 다운로드 완료';
+                    mp3Btn.classList.add('completed');
                     mp3Btn.disabled = true;
                     mp3Btn.classList.remove('ready');
                     delete mp3Btn.dataset.mp3Url;
@@ -3761,7 +3802,7 @@
                             a.download = recordingName + '.mp3';
                             a.click();
                             
-                            this.innerHTML = '<i class="fas fa-check"></i> MP3 다운로드 완료';
+                            this.classList.add('completed');
                             this.disabled = true;
                             delete this.dataset.mp3Url;
                         };
