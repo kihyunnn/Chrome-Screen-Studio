@@ -2581,6 +2581,10 @@
             statusDot.classList.remove('recording');
             timer.textContent = '00:00';
 
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
 
             clearAutoStop();
             autoStopRemainWrapper.style.display = 'none';
