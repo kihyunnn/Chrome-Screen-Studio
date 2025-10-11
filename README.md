@@ -1,167 +1,210 @@
 # Chrome Recording Studio
 
-A lightweight, browser-based screen recording tool built with pure HTML, CSS, and JavaScript. No server required, no data transmission — everything runs locally in your browser.
+브라우저 기반 화면 녹화 도구. 순수 HTML, CSS, JavaScript로 제작되었으며, 서버 없이 로컬에서 모든 처리가 이루어집니다.
 
-> **Built with Vibe Coding**: Developed using VS Code GitHub Copilot + OpenCode for rapid, iterative development.
+> **Vibe Coding으로 제작**: VS Code GitHub Copilot + OpenCode를 활용한 빠른 반복 개발.
 
-## ✨ Features
+## ✨ 주요 기능
 
-### 🎥 Screen Recording
-- **High-Quality Recording**: Support for 4K (3840×2160), Full HD (1920×1080), and HD (1280×720)
-- **Frame Rate Control**: Choose between 60, 30, or 24 FPS
-- **System Audio Capture**: Record screen with tab/system audio (browser-dependent)
-- **Auto-Stop Timer**: Set automatic recording duration (up to 180 minutes)
-- **Live Preview**: Real-time preview while recording with LIVE indicator
-- **Output Format**: WebM video files (VP8/VP9 codec) with `.webm` extension
+### 🎥 화면 녹화
+- **고품질 녹화**: 4K (3840×2160), Full HD (1920×1080), HD (1280×720) 지원
+- **프레임 레이트 선택**: 60 FPS, 30 FPS, 24 FPS
+- **오디오 자동 포함**: 별도 체크박스 없이 탭/시스템 오디오 자동 녹음 (브라우저 지원 범위 내)
+- **30분 자동 분할**: 30분마다 자동으로 녹화 파일 분할 (메모리 안정성)
+- **자동 종료 타이머**: 최대 180분까지 녹화 자동 종료 설정 가능
+- **실시간 미리보기**: 녹화 중 타이머 및 파트 번호 표시
+- **출력 형식**: WebM 비디오 파일 (VP8/VP9 코덱)
 
-###  Recording Management
-- **History List**: All recordings saved in chronological order
-- **Quick Download**: One-click download for each recording
-- **Preview & Playback**: Review videos before downloading
-- **Timestamp Tracking**: Each recording tagged with capture date/time and duration
+### 🎵 오디오 추출 및 변환
+- **WebM 오디오 추출**: 녹화된 비디오에서 오디오만 추출 (WebM 형식)
+- **MP3 변환**: WebM 오디오를 MP3로 변환
+  - ⚠️ **중요**: 20분 이상 영상의 MP3 변환은 불안정할 수 있음
+  - 30분 이상 긴 영상은 **Gemini에 WebM 그대로 업로드 권장**
+  - MP3 변환 시 브라우저 메모리 부담으로 느려지거나 실패할 수 있음
 
-## 🚀 Quick Start
+### 📋 녹화 관리
+- **녹화 이름 편집**: 인라인 편집으로 녹화 제목 변경 가능
+- **녹화 이력**: 시간순 정렬된 녹화 목록
+- **파트 표시**: 30분 이상 녹화는 파트 번호 표시 (예: Part 1, Part 2)
+- **원클릭 다운로드**: 각 녹화 항목 간편 다운로드
+- **미리보기 및 재생**: 다운로드 전 비디오 확인
+- **타임스탬프**: 녹화 날짜/시간 및 재생 시간 표시
+- **경고 배지**: 30분 이상 긴 영상 표시
 
-### Option 1: Local File
-1. Download `Chrome_Recording_Studio.html`
-2. Open the file in Chrome or Edge browser
-3. Click "녹화 시작" (Start Recording) and grant screen sharing permission
-4. Your recording will be saved locally
+### 💾 30분 이상 녹화 저장 옵션
+30분 이상 녹화 시 저장 옵션 선택 가능:
+- **파트만 저장**: 30분 단위로 분할된 파일들만 저장
+- **전체만 저장**: 병합된 전체 파일만 저장
+- **둘 다 저장**: 파트 + 전체 파일 모두 저장
 
-### Option 2: Deploy to Server
-Since this is a static HTML file, you can deploy it anywhere:
+## 🚀 빠른 시작
 
-**Using Docker + Nginx:**
+### 로컬 파일 실행
+1. `Chrome_Recording_Studio.html` 파일 다운로드
+2. Chrome 또는 Edge 브라우저에서 파일 열기
+3. "녹화 시작" 클릭 후 화면 공유 권한 허용
+4. 녹화가 로컬에 저장됨
+
+### 서버 배포 (선택사항)
+정적 HTML 파일이므로 어디든 배포 가능:
+
+**Docker + Nginx 사용:**
 ```bash
-# Create Dockerfile
+# Dockerfile 생성
 FROM nginx:alpine
 COPY Chrome_Recording_Studio.html /usr/share/nginx/html/index.html
 EXPOSE 80
 
-# Build and run
+# 빌드 및 실행
 docker build -t chrome-recording-studio .
 docker run -d -p 8080:80 chrome-recording-studio
 ```
 
-**Using Python HTTP Server:**
+**Python HTTP 서버 사용:**
 ```bash
 python -m http.server 8000
 ```
 
-Then access via `http://localhost:8000`
+이후 `http://localhost:8000` 접속
 
-## 🎮 Usage
+## 🎮 사용 방법
 
-### Recording a Video
-1. Select desired quality and frame rate
-2. Enable "오디오 포함" (Include Audio) if you want system audio
-3. (Optional) Enable "자동 종료" (Auto-Stop) and set duration
-4. Click "녹화 시작" (Start Recording)
-5. Choose screen/tab to share in browser dialog
-6. Click "녹화 중지" (Stop Recording) when done
-7. Download from the recording history list
+### 비디오 녹화
+1. 원하는 화질과 프레임 레이트 선택
+2. (선택사항) "자동 종료" 활성화 후 녹화 시간 설정
+3. "녹화 시작" 클릭
+4. 브라우저 대화상자에서 공유할 화면/탭 선택
+5. 녹화 완료 시 "녹화 중지" 클릭
+   - 30분 이상: 저장 옵션 모달에서 선택 (파트만/전체만/둘 다)
+6. 녹화 이력에서 다운로드
 
-## 🛠️ Technical Details
+### 오디오 추출 및 MP3 변환
+1. 녹화 이력에서 "WebM Audio 추출" 버튼 클릭
+2. WebM 오디오 파일 다운로드
+3. (선택사항) "MP3 변환" 버튼 클릭
+   - ⚠️ 20분 이상 영상: 경고 메시지 표시 (불안정 가능)
+   - 변환 완료 후 MP3 파일 다운로드
 
-### Browser Compatibility
-- **Recommended**: Chrome 94+, Edge 94+ (full feature support)
-- **Limited**: Firefox (may lack system audio capture)
-- **Not Supported**: Safari, mobile browsers (missing `getDisplayMedia` API)
+### 녹화 이름 편집
+- 녹화 제목을 클릭하여 직접 편집 가능
+- Enter 키 또는 다른 곳 클릭 시 저장
 
-### APIs Used
-- `navigator.mediaDevices.getDisplayMedia()` - Screen capture
-- `MediaRecorder` - Video encoding
-- `Blob` & `URL.createObjectURL()` - File generation
+## 🛠️ 기술 사양
 
-### File Formats
-| Type | Format | Extension | Details |
-|------|--------|-----------|---------|
-| Video | WebM | `.webm` | VP8/VP9 codec, variable bitrate |
+### 브라우저 호환성
+- **권장**: Chrome 94+, Edge 94+ (전체 기능 지원)
+- **제한적**: Firefox (시스템 오디오 캡처 제한 가능)
+- **미지원**: Safari, 모바일 브라우저 (`getDisplayMedia` API 미지원)
 
-### Privacy & Security
-- ✅ **100% Local Processing**: No data sent to any server
-- ✅ **No Tracking**: No analytics or external scripts
-- ✅ **User Permissions**: Browser prompts for screen/audio access
-- ⚠️ **DRM Content**: May show black screen for protected content
+### 사용된 API
+- `navigator.mediaDevices.getDisplayMedia()` - 화면 캡처
+- `MediaRecorder` - 비디오 인코딩
+- `Blob` & `URL.createObjectURL()` - 파일 생성
+- Web Worker - MP3 변환 (내장)
 
-## 📐 Architecture
+### 파일 형식
+| 타입 | 형식 | 확장자 | 세부사항 |
+|------|------|--------|---------|
+| 비디오 | WebM | `.webm` | VP8/VP9 코덱, 가변 비트레이트 |
+| 오디오 (추출) | WebM | `.webm` | 오디오 트랙만 |
+| 오디오 (변환) | MP3 | `.mp3` | 브라우저 내 변환 (20분+ 불안정) |
+
+### 개인정보 보호 및 보안
+- ✅ **100% 로컬 처리**: 어떠한 서버로도 데이터 전송 없음
+- ✅ **추적 없음**: 분석 도구나 외부 스크립트 없음
+- ✅ **사용자 권한**: 화면/오디오 접근 시 브라우저 권한 요청
+- ⚠️ **DRM 콘텐츠**: 보호된 콘텐츠는 검은 화면으로 표시될 수 있음
+
+## 📐 아키텍처
 
 ```
-Single HTML File (Chrome_Recording_Studio.html)
-├── Inline CSS (Modern Dark Theme with Gradients)
-├── Font Awesome Icons
-├── Noto Sans KR Font
+단일 HTML 파일 (Chrome_Recording_Studio.html)
+├── 인라인 CSS (모던 다크 테마 + 그라디언트)
+├── Font Awesome 아이콘
+├── Noto Sans KR 폰트
 ├── Vanilla JavaScript
-│   ├── MediaRecorder Management
-│   ├── Timer & Auto-Stop Logic
-│   └── UI State Management
-└── No External Dependencies (except fonts/icons CDN)
+│   ├── MediaRecorder 관리
+│   ├── 30분 자동 분할 로직
+│   ├── 타이머 & 자동 종료 로직
+│   ├── WebM 오디오 추출
+│   ├── MP3 변환 (Web Worker 내장)
+│   └── UI 상태 관리
+└── 외부 의존성 없음 (폰트/아이콘 CDN 제외)
 ```
 
-## ⚙️ Configuration
+## ⚙️ 설정
 
-### Auto-Stop Timer
-- Max duration: 180 minutes
-- Default: 10 minutes
-- Remaining time display during recording
+### 자동 종료 타이머
+- 최대 시간: 180분
+- 기본값: 10분
+- 녹화 중 남은 시간 표시
 
-### Video Quality Presets
-| Quality | Resolution | Bitrate |
-|---------|-----------|---------|
+### 비디오 화질 프리셋
+| 화질 | 해상도 | 비트레이트 |
+|------|--------|-----------|
 | 4K | 3840×2160 | 20 Mbps |
 | Full HD | 1920×1080 | 8 Mbps |
 | HD | 1280×720 | 5 Mbps |
 
-## 🐛 Known Limitations
+### 30분 자동 분할
+- 모든 녹화는 30분마다 자동 분할
+- 메모리 안정성 향상
+- 30분 이상 녹화 시 저장 옵션 선택 가능
 
-1. **Audio Capture**: System audio availability depends on OS/browser support
-   - Windows Chrome/Edge: ✅ System audio
-   - macOS: ⚠️ Limited to tab audio
-   - Linux: Varies by distribution
+## 🐛 알려진 제한사항
 
-2. **File Format**: Direct MP4 export not supported
-   - WebM is native output
-   - Convert to MP4 using FFmpeg if needed:
+1. **오디오 캡처**: 시스템 오디오 가용성은 OS/브라우저 지원에 따라 다름
+   - Windows Chrome/Edge: ✅ 시스템 오디오
+   - macOS: ⚠️ 탭 오디오로 제한
+   - Linux: 배포판에 따라 다름
+
+2. **MP3 변환 불안정성**: 
+   - 20분 이상 영상: MP3 변환 시 느려지거나 실패 가능
+   - 30분 이상 영상: **WebM 형식 그대로 Gemini 업로드 권장**
+   - 브라우저 메모리 부담으로 인한 제한
+
+3. **파일 형식**: 직접 MP4 내보내기 미지원
+   - WebM이 기본 출력 형식
+   - MP4 변환 필요 시 FFmpeg 사용:
      ```bash
      ffmpeg -i recording.webm -c:v libx264 -c:a aac output.mp4
      ```
 
-3. **Memory**: Long recordings accumulate chunks in RAM
-   - Monitor browser memory usage
-   - Recommended max: 60 minutes per session
+4. **메모리**: 긴 녹화는 RAM에 청크 누적
+   - 브라우저 메모리 사용량 모니터링 필요
+   - 30분 자동 분할로 완화됨
 
-4. **Browser Volume**: If Chrome is muted in system mixer, audio won't be captured
+5. **브라우저 볼륨**: Chrome이 시스템 믹서에서 음소거되면 오디오 캡처 안 됨
 
-## � Roadmap
+## 📋 로드맵
 
-- [ ] LocalStorage settings persistence
-- [ ] Toast notifications (replace alerts)
-- [ ] OCR-based screen timer detection (experimental)
-- [ ] Video bitrate customization
-- [ ] Multi-language support (i18n)
+- [ ] LocalStorage 설정 저장
+- [ ] Toast 알림 (alert 대체)
+- [ ] OCR 기반 화면 타이머 감지 (실험적)
+- [ ] 비디오 비트레이트 커스터마이징
+- [ ] 다국어 지원 (i18n)
 
-## �📄 Documentation
+## 📄 문서
 
-- `Screen Capture Studio - PRD.md` - Product Requirements Document (English)
-- `TASKS_타이머_오디오기능.md` - Implementation Task List (Korean)
+- `Screen Capture Studio - PRD.md` - 제품 요구사항 문서 (영문)
 
-## 🤝 Contributing
+## 🤝 기여
 
-This is a personal project but feedback is welcome! Open issues or PRs if you find bugs or have suggestions.
+개인 프로젝트이지만 피드백은 환영합니다! 버그나 제안사항이 있다면 이슈나 PR을 열어주세요.
 
-## 📜 License
+## 📜 라이선스
 
-MIT License - Feel free to use and modify
+MIT License - 자유롭게 사용 및 수정 가능
 
-## 🙏 Acknowledgments
+## 🙏 제작 도구
 
-Built with:
-- **Vibe Coding Workflow**: VS Code GitHub Copilot + OpenCode for AI-assisted pair programming
-- Chrome DevTools Media APIs
-- Font Awesome Icons
-- Noto Sans KR Font (Google Fonts)
-- Pure vanilla JavaScript (no frameworks!)
+다음으로 제작:
+- **Vibe Coding 워크플로우**: VS Code GitHub Copilot + OpenCode를 활용한 AI 페어 프로그래밍
+- Chrome DevTools Media API
+- Font Awesome 아이콘
+- Noto Sans KR 폰트 (Google Fonts)
+- 순수 바닐라 JavaScript (프레임워크 없음!)
 
 ---
 
-**Note**: This tool respects user privacy by design. All processing happens in your browser, and no data ever leaves your device.
+**참고**: 이 도구는 설계 단계부터 사용자 개인정보를 보호합니다. 모든 처리는 브라우저에서 이루어지며, 어떠한 데이터도 기기 외부로 전송되지 않습니다.

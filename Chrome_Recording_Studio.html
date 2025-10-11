@@ -108,9 +108,17 @@
             scroll-behavior: smooth;
         }
 
+        .header-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: clamp(20px, 3vw, 28px);
+            flex-shrink: 0;
+        }
+
         .logo {
             font-size: clamp(22px, 2.8vw, 26px);
-            margin-bottom: clamp(20px, 3vw, 28px);
             text-align: center;
             color: var(--text-primary);
             font-weight: 700;
@@ -121,12 +129,191 @@
             background-clip: text;
             text-shadow: 0 0 30px var(--accent-blue-glow);
             animation: logoGlow 3s ease-in-out infinite;
-            flex-shrink: 0;
+        }
+
+        .help-button {
+            position: absolute;
+            right: 0;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(76, 154, 255, 0.3);
+        }
+
+        .help-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(76, 154, 255, 0.5);
+        }
+
+        .help-button:active {
+            transform: scale(0.95);
         }
 
         @keyframes logoGlow {
             0%, 100% { filter: drop-shadow(0 0 10px var(--accent-blue-glow)); }
             50% { filter: drop-shadow(0 0 20px var(--accent-purple-glow)); }
+        }
+
+        /* 사용설명서 모달 */
+        .user-manual-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .user-manual-modal.show {
+            display: flex;
+        }
+
+        .user-manual-content {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            max-height: 85vh;
+            width: 90%;
+            border: 1px solid var(--border-primary);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .user-manual-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border-primary);
+        }
+
+        .user-manual-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-manual-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 28px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .user-manual-close:hover {
+            background: var(--bg-hover);
+            color: var(--accent-red);
+            transform: rotate(90deg);
+        }
+
+        .user-manual-section {
+            margin-bottom: 28px;
+        }
+
+        .user-manual-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-manual-section h3 i {
+            font-size: 20px;
+        }
+
+        .user-manual-section p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 10px;
+        }
+
+        .user-manual-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 8px;
+        }
+
+        .user-manual-section li {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .user-manual-section li::before {
+            content: '•';
+            position: absolute;
+            left: 8px;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .user-manual-warning {
+            background: linear-gradient(135deg, rgba(255, 87, 87, 0.1), rgba(251, 146, 60, 0.1));
+            border-left: 4px solid var(--accent-red);
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .user-manual-warning p {
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .user-manual-warning strong {
+            color: var(--accent-red);
+        }
+
+        .user-manual-info {
+            background: linear-gradient(135deg, rgba(76, 154, 255, 0.1), rgba(168, 85, 247, 0.1));
+            border-left: 4px solid var(--accent-blue);
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .user-manual-info p {
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .user-manual-info strong {
+            color: var(--accent-blue);
         }
 
         .section {
@@ -575,6 +762,23 @@
             background-clip: text;
         }
 
+        .timer-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .part-indicator {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 2px 8px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 6px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
         /* 콘텐츠 영역 - 미리보기와 기록을 감싸는 컨테이너 */
         .content-area {
             display: flex;
@@ -851,7 +1055,7 @@
         }
 
         .recording-name {
-            font-size: 16px;
+            font-size: 20px;
             color: var(--text-primary);
             font-weight: 600;
         }
@@ -876,12 +1080,12 @@
         }
 
         .edit-btn {
-            padding: 8px 14px;
+            padding: 12px 18px;
             background: linear-gradient(135deg, var(--accent-blue), #2563eb);
             color: var(--text-primary);
             border: none;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 700;
@@ -893,14 +1097,7 @@
             gap: 6px;
         }
 
-        .edit-btn::before {
-            content: '\f044';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-        }
-
         .edit-btn:hover {
-            transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
             background: linear-gradient(135deg, #2563eb, var(--accent-blue));
         }
@@ -910,7 +1107,7 @@
         }
 
         .recording-time {
-            font-size: 13px;
+            font-size: 16px;
             color: var(--text-muted);
             display: flex;
             align-items: center;
@@ -921,16 +1118,63 @@
             content: '\f017';
             font-family: 'Font Awesome 6 Free';
             font-weight: 400;
+            font-size: 14px;
+        }
+
+        .duration-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .duration-badge.short {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .duration-badge.medium {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+        }
+
+        .duration-badge.long {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+        }
+
+        .warning-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-size: 12px;
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            margin-top: 6px;
+            gap: 6px;
+        }
+
+        .warning-badge::before {
+            content: '⚠';
+            font-size: 14px;
         }
 
         .download-btn {
-            padding: 9px 18px;
+            padding: 12px 22px;
             background: linear-gradient(135deg, var(--accent-green), #059669);
             color: var(--text-primary);
             border-radius: 8px;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 15px;
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 700;
             white-space: nowrap;
@@ -941,28 +1185,174 @@
             gap: 8px;
         }
 
-        .download-btn::before {
-            content: '\f019';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            font-size: 14px;
-            transition: transform 0.3s ease;
-        }
-
         .download-btn:hover {
             background: linear-gradient(135deg, #059669, #047857);
-            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
-        .download-btn:hover::before {
-            transform: translateY(2px);
-            animation: downloadBounce 0.6s ease infinite;
+        .mp3-btn {
+            padding: 12px 22px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
         }
 
-        @keyframes downloadBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(3px); }
+        .mp3-btn.loading {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: #d1d5db;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid #6b7280;
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.35);
+            min-width: 180px;
+        }
+
+        .mp3-btn.loading::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border: 2px solid #d1d5db;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: mp3Spinner 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .mp3-btn.ready {
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+            min-width: 180px;
+        }
+
+        .mp3-btn.ready:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .mp3-btn.ready:active {
+            transform: translateY(0);
+        }
+
+        .mp3-btn.failed {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: 1px solid #ef4444;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+        }
+
+        .mp3-btn.failed:hover {
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+        @keyframes mp3Spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .mp3-convert-btn {
+            padding: 12px 18px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Noto Sans KR', sans-serif;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .mp3-convert-btn[data-state="ready"] {
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-blue);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+            position: relative;
+        }
+
+        .mp3-convert-btn[data-state="ready"]:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .mp3-convert-btn[data-state="ready"]:active {
+            transform: translateY(0);
+        }
+
+        .mp3-convert-btn[data-state="ready"]:hover {
+            background: linear-gradient(135deg, #9333ea, #7e22ce);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        
+        .mp3-convert-btn[data-state="preparing"] {
+            background: linear-gradient(135deg, #4b5563, #374151);
+            color: #9ca3af;
+            cursor: default;
+            pointer-events: none;
+            border: 1px solid #4b5563;
+            box-shadow: 0 2px 8px rgba(75, 85, 99, 0.35);
+        }
+
+        .mp3-convert-btn[data-state="converting"] {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: #d1d5db;
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid #6b7280;
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.35);
+        }
+
+        .mp3-convert-btn[data-state="converting"]::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border: 2px solid #d1d5db;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: mp3Spinner 0.8s linear infinite;
+        }
+
+        .mp3-convert-btn .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            border-radius: 0 0 8px 8px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        }
+
+        .mp3-convert-btn[data-state="done"] {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: var(--text-primary);
+            border: 1px solid #10b981;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+        }
+
+        .mp3-convert-btn[data-state="done"]:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .mp3-convert-btn[data-state="done"]:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
         /* 확대 모달 */
@@ -1090,6 +1480,116 @@
             50% { transform: translateY(-8px); }
         }
 
+        /* 저장 옵션 선택 모달 */
+        .save-options-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .save-options-modal.show {
+            display: flex;
+        }
+
+        .save-options-content {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 520px;
+            width: 90%;
+            border: 1px solid var(--border-primary);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .save-options-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .save-options-title i {
+            color: var(--accent-blue);
+        }
+
+        .save-options-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .save-option-btn {
+            width: 100%;
+            padding: 18px 24px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--bg-accent), var(--bg-hover));
+            border: 2px solid var(--border-primary);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .save-option-btn:hover {
+            background: linear-gradient(135deg, var(--bg-hover), var(--bg-accent));
+            border-color: var(--accent-blue);
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(76, 154, 255, 0.3);
+        }
+
+        .save-option-btn i {
+            font-size: 20px;
+            color: var(--accent-blue);
+        }
+
+        .save-option-btn .option-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .save-option-btn .option-title {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .save-option-btn .option-desc {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
         /* 토스트 알림 - 개선된 스타일 */
         .toast-container {
             position: fixed;
@@ -1169,6 +1669,18 @@
         .toast.info::before {
             background: var(--accent-blue);
             box-shadow: 0 0 12px var(--accent-blue);
+        }
+
+        .toast.success {
+            border-color: var(--accent-green);
+            background: linear-gradient(135deg,
+                rgba(34, 197, 94, 0.15),
+                rgba(34, 197, 94, 0.05));
+        }
+
+        .toast.success::before {
+            background: var(--accent-green);
+            box-shadow: 0 0 12px var(--accent-green);
         }
 
         .toast-icon {
@@ -1405,7 +1917,12 @@
     <div class="main-container">
         <!-- 왼쪽 설정 패널 -->
         <div class="settings-panel">
-            <div class="logo">크롬 녹화 스튜디오</div>
+            <div class="header-section">
+                <div class="logo">크롬 녹화 스튜디오</div>
+                <button class="help-button" id="helpButton">
+                    <i class="fas fa-question"></i>
+                </button>
+            </div>
             
             <!-- 녹화 설정 -->
             <div class="section">
@@ -1426,14 +1943,7 @@
                         <option value="24">24 FPS</option>
                     </select>
                 </div>
-                <div class="setting-group">
-                    <div class="setting-row">
-                        <label class="checkbox-label" for="recordAudio">
-                            <input type="checkbox" id="recordAudio">
-                            오디오 포함
-                        </label>
-                    </div>
-                </div>
+
             </div>
  
             <!-- 자동 종료 설정 -->
@@ -1487,7 +1997,10 @@
                     <div class="status-dot" id="statusDot"></div>
                     <span id="statusText">대기 중</span>
                 </div>
-                <div class="timer" id="timer">00:00</div>
+                <div class="timer-wrapper">
+                    <div class="timer" id="timer">00:00</div>
+                    <div class="part-indicator" id="partIndicator" style="display: none;">Part 1</div>
+                </div>
             </div>
 
             <div class="content-area">
@@ -1497,8 +2010,8 @@
                         <span class="live-badge" id="liveBadge">LIVE</span>
                     </div>
                     <div class="preview-content">
-                        <video id="livePreview" autoplay muted></video>
-                        <video id="preview" controls></video>
+                        <video id="livePreview" autoplay muted playsinline></video>
+                        <video id="preview" controls playsinline></video>
                         <div class="empty-state" id="emptyPreview">캡처된 내용이 여기에 표시됩니다</div>
                     </div>
                 </div>
@@ -1520,6 +2033,112 @@
     <!-- 토스트 알림 컨테이너 -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- 저장 옵션 선택 모달 -->
+    <div class="save-options-modal" id="saveOptionsModal">
+        <div class="save-options-content">
+            <div class="save-options-title">
+                <i class="fas fa-save"></i>
+                녹화 저장 옵션 선택
+            </div>
+            <div class="save-options-description">
+                30분 이상 녹화되어 자동 분할되었습니다. 어떤 방식으로 저장하시겠습니까?
+            </div>
+            
+            <button class="save-option-btn" data-option="parts">
+                <i class="fas fa-layer-group"></i>
+                <div class="option-text">
+                    <span class="option-title">분할 영상만 저장</span>
+                    <span class="option-desc">30분 단위로 나뉜 파일들만 저장합니다</span>
+                </div>
+            </button>
+            
+            <button class="save-option-btn" data-option="full">
+                <i class="fas fa-film"></i>
+                <div class="option-text">
+                    <span class="option-title">전체 영상만 저장</span>
+                    <span class="option-desc">전체가 합쳐진 하나의 파일만 저장합니다</span>
+                </div>
+            </button>
+            
+            <button class="save-option-btn" data-option="both">
+                <i class="fas fa-copy"></i>
+                <div class="option-text">
+                    <span class="option-title">둘 다 저장</span>
+                    <span class="option-desc">분할 영상과 전체 영상 모두 저장합니다</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- 사용설명서 모달 -->
+    <div class="user-manual-modal" id="userManualModal">
+        <div class="user-manual-content">
+            <div class="user-manual-header">
+                <div class="user-manual-title">
+                    <i class="fas fa-book"></i>
+                    사용설명서
+                </div>
+                <button class="user-manual-close" id="closeManualButton">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="user-manual-section">
+                <h3><i class="fas fa-microphone"></i> 오디오 녹음</h3>
+                <p>모든 녹화에는 자동으로 오디오가 포함됩니다. 별도의 체크박스 설정이 필요하지 않습니다.</p>
+                <ul>
+                    <li>Windows Chrome/Edge: 시스템 오디오 지원</li>
+                    <li>macOS: 탭 오디오로 제한</li>
+                    <li>브라우저가 시스템 믹서에서 음소거된 경우 녹음되지 않음</li>
+                </ul>
+            </div>
+
+            <div class="user-manual-section">
+                <h3><i class="fas fa-scissors"></i> 30분 자동 분할</h3>
+                <p>메모리 안정성을 위해 모든 녹화는 30분마다 자동으로 분할됩니다.</p>
+                <div class="user-manual-info">
+                    <p><strong>저장 옵션:</strong> 30분 이상 녹화 시 파트만/전체만/둘 다 저장 중 선택 가능</p>
+                </div>
+            </div>
+
+            <div class="user-manual-section">
+                <h3><i class="fas fa-music"></i> WebM 오디오 추출</h3>
+                <p>녹화된 비디오에서 오디오 트랙만 추출하여 WebM 형식으로 저장할 수 있습니다.</p>
+                <ul>
+                    <li>빠른 처리 속도</li>
+                    <li>품질 손실 없음</li>
+                    <li>모든 길이의 영상에서 안정적</li>
+                </ul>
+            </div>
+
+            <div class="user-manual-section">
+                <h3><i class="fas fa-file-audio"></i> MP3 변환</h3>
+                <p>WebM 오디오를 MP3 형식으로 변환할 수 있습니다.</p>
+                <div class="user-manual-warning">
+                    <p><strong>중요:</strong> 20분 이상 영상의 MP3 변환은 브라우저 메모리 부담으로 느려지거나 실패할 수 있습니다.</p>
+                </div>
+                <div class="user-manual-info">
+                    <p><strong>권장사항:</strong> 30분 이상 긴 영상은 WebM 형식 그대로 Gemini에 업로드하는 것을 권장합니다.</p>
+                </div>
+            </div>
+
+            <div class="user-manual-section">
+                <h3><i class="fas fa-robot"></i> Gemini 업로드</h3>
+                <p>WebM 형식은 Google Gemini와 완벽하게 호환됩니다.</p>
+                <ul>
+                    <li>30분 이상 긴 영상도 WebM으로 안정적 업로드 가능</li>
+                    <li>MP3 변환 없이 바로 사용 가능</li>
+                    <li>영상 + 오디오 동시 분석 가능</li>
+                </ul>
+            </div>
+
+            <div class="user-manual-section">
+                <h3><i class="fas fa-shield-alt"></i> 개인정보 보호</h3>
+                <p>모든 처리는 브라우저에서 로컬로 이루어지며, 어떠한 데이터도 외부 서버로 전송되지 않습니다.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="app-footer">
         <span>Made by</span>
@@ -1540,6 +2159,14 @@
         let autoStopTimeoutId = null;
         let autoStopDeadline = null;
 
+        // 30분 자동 분할 관련 변수
+        let autoSplitEnabled = true; // 항상 활성화
+        let autoSplitIntervalMs = 30 * 60 * 1000; // 30분 = 1800000ms
+        let autoSplitTimeoutId = null;
+        let currentPartNumber = 1; // 현재 파일 파트 번호
+        let baseName = ''; // 녹화 시작 시 결정되는 기본 파일명
+        let allRecordedChunks = []; // 전체 녹화 세션의 모든 청크 누적
+
         // ===== Debug & State Enhancements =====
         const DEBUG = false; // 필요 시 true로 변경하여 상세 로그 확인
         // [DEBUG] prefix 로그만 필터링하도록 console.log 패치 (기존 코드 최소 변경)
@@ -1559,15 +2186,22 @@
 
         // 생성된 Blob Object URL 추적 (세션 종료 시 revoke)
         const recordingUrls = [];
+        const audioUrls = [];
+        const AUTOPLAY_WAIT_TIMEOUT_MS = 30000;
+        // Per-item handlers and states
+        const autoplayRetryMap = new WeakMap(); // item -> { handler, timeoutId }
+        const extractionStateMap = new WeakMap(); // item -> { inProgress: boolean, pendingRevokeHref: string|null }
         window.addEventListener('beforeunload', () => {
             recordingUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(_){} });
+            audioUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(_){} });
         });
 
 
         // 기능 토글 플래그
         let autoStopEnabled = false;
-        let audioEnabled = false;
+        let audioEnabled = true;
         let micMixEnabled = false;
+        let isAutoSplitting = false;
 
 
         // DOM 요소
@@ -1579,6 +2213,7 @@
         const statusText = document.getElementById('statusText');
         const statusDot = document.getElementById('statusDot');
         const timer = document.getElementById('timer');
+        const partIndicator = document.getElementById('partIndicator');
         const recordingsList = document.getElementById('recordingsList');
         const emptyPreview = document.getElementById('emptyPreview');
         const liveBadge = document.getElementById('liveBadge');
@@ -1588,7 +2223,7 @@
         const autoStopSecondsInput = document.getElementById('autoStopSeconds');
         const autoStopRemainWrapper = document.getElementById('autoStopRemainWrapper');
         const autoStopRemain = document.getElementById('autoStopRemain');
-        const recordAudioCheckbox = document.getElementById('recordAudio');
+        const saveOptionsModal = document.getElementById('saveOptionsModal');
 
         // 화질 설정
 
@@ -1607,11 +2242,27 @@
         autoStopSecondsInput.addEventListener('change', handleAutoStopInputChange);
         autoStopMinutesInput.addEventListener('blur', handleAutoStopInputChange);
         autoStopSecondsInput.addEventListener('blur', handleAutoStopInputChange);
-        recordAudioCheckbox.addEventListener('change', handleAudioToggle);
+
+        const helpButton = document.getElementById('helpButton');
+        const userManualModal = document.getElementById('userManualModal');
+        const closeManualButton = document.getElementById('closeManualButton');
+
+        helpButton.addEventListener('click', () => {
+            userManualModal.classList.add('show');
+        });
+
+        closeManualButton.addEventListener('click', () => {
+            userManualModal.classList.remove('show');
+        });
+
+        userManualModal.addEventListener('click', (e) => {
+            if (e.target === userManualModal) {
+                userManualModal.classList.remove('show');
+            }
+        });
 
         // 초기 UI 상태
         handleAutoStopToggle();
-        handleAudioToggle();
 
 
         // === 유틸리티 함수 ===
@@ -1624,9 +2275,12 @@
         function notify(type, message) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            
-            const icon = type === 'warn' ? '⚠️' : 'ℹ️';
+            const validTypes = ['info', 'warn', 'success', 'error'];
+            const t = validTypes.includes(type) ? type : 'info';
+            toast.className = `toast ${t}`;
+
+            const iconMap = { info: 'ℹ️', warn: '⚠️', success: '✅', error: '⛔' };
+            const icon = iconMap[t] || 'ℹ️';
             
             toast.innerHTML = `
                 <span class="toast-icon">${icon}</span>
@@ -1636,8 +2290,8 @@
             container.appendChild(toast);
             
             setTimeout(() => {
-                toast.style.animation = 'slideIn 0.3s ease-out reverse';
-                setTimeout(() => toast.remove(), 300);
+                toast.style.animation = 'toastSlideIn 0.25s ease-out reverse';
+                setTimeout(() => toast.remove(), 250);
             }, 4000);
         }
 
@@ -1680,11 +2334,6 @@
                 autoStopRemainWrapper.style.display = 'none';
             }
         }
-
-        function handleAudioToggle() {
-            audioEnabled = recordAudioCheckbox.checked;
-        }
-
 
         function calcAutoStopMs(minutes, seconds) {
             let m = parseInt(minutes, 10);
@@ -1769,6 +2418,109 @@
                 autoStopTimeoutId = null;
             }
             autoStopDeadline = null;
+        }
+
+        // 30분 자동 분할 함수들
+        function scheduleAutoSplit() {
+            clearAutoSplit();
+            if (!autoSplitEnabled || !autoSplitIntervalMs || autoSplitIntervalMs <= 0) {
+                return;
+            }
+
+            autoSplitTimeoutId = setTimeout(() => {
+                autoSplitTimeoutId = null;
+                performAutoSplit();
+            }, autoSplitIntervalMs);
+        }
+
+        function clearAutoSplit() {
+            if (autoSplitTimeoutId) {
+                clearTimeout(autoSplitTimeoutId);
+                autoSplitTimeoutId = null;
+            }
+        }
+
+        async function performAutoSplit() {
+            if (!mediaRecorder || mediaRecorder.state !== 'recording') {
+                return;
+            }
+
+            console.log(`[AUTO-SPLIT] 30분 도달, Part ${currentPartNumber} 저장 시작`);
+
+            isAutoSplitting = true;
+
+            allRecordedChunks.push(...recordedChunks);
+
+            mediaRecorder.stop();
+
+            currentPartNumber++;
+
+            await restartRecording();
+            
+            isAutoSplitting = false;
+        }
+
+        async function restartRecording() {
+            if (!stream) {
+                console.error('[AUTO-SPLIT] stream이 존재하지 않아 재시작 불가');
+                return;
+            }
+
+            try {
+                // 기존 설정 재사용
+                const recorderOptions = {
+                    mimeType: 'video/webm'
+                };
+
+                const preferredMimeTypes = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
+                const canCheckMimeSupport = typeof MediaRecorder !== 'undefined' && typeof MediaRecorder.isTypeSupported === 'function';
+                const supportedMime = canCheckMimeSupport
+                    ? preferredMimeTypes.find(type => MediaRecorder.isTypeSupported(type))
+                    : 'video/webm';
+                recorderOptions.mimeType = supportedMime ?? null;
+
+                let recorderConfig = { ...recorderOptions };
+                if (!recorderConfig.mimeType) {
+                    delete recorderConfig.mimeType;
+                }
+
+                try {
+                    mediaRecorder = new MediaRecorder(stream, recorderConfig);
+                } catch (error) {
+                    if (recorderConfig.mimeType) {
+                        delete recorderConfig.mimeType;
+                        mediaRecorder = new MediaRecorder(stream, recorderConfig);
+                    } else {
+                        throw error;
+                    }
+                }
+
+                recordedChunks = [];
+                console.log(`[AUTO-SPLIT] recordedChunks 초기화, Part ${currentPartNumber} 시작`);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                        console.log('[DEBUG] Data chunk received, size:', event.data.size, 'total chunks:', recordedChunks.length);
+                    }
+                };
+
+                mediaRecorder.onstop = handleRecordingStop;
+
+                mediaRecorder.start();
+                console.log(`[AUTO-SPLIT] Part ${currentPartNumber} 녹화 시작`);
+
+                // Part 인디케이터 업데이트
+                partIndicator.textContent = `Part ${currentPartNumber}`;
+
+                // 다음 30분 타이머 설정
+                scheduleAutoSplit();
+
+            } catch (error) {
+                console.error('[AUTO-SPLIT] 재시작 실패:', error);
+                notify('error', '자동 분할 중 오류가 발생했습니다.');
+                stopRecording();
+            }
         }
 
         function updateAutoStopRemain(remainingMs) {
@@ -1902,6 +2654,12 @@
                 const { stream: capturedStream, settings } = await createDisplayStream({ audio: audioEnabled });
                 stream = capturedStream;
 
+                // 자동 분할용 기본 파일명 생성 (녹화 시작 시점에 고정)
+                recordingCount++;
+                const suffix = audioEnabled ? '_av' : '_v';
+                baseName = `녹화 ${recordingCount}${suffix}`;
+                currentPartNumber = 1;
+
                 // 라이브 미리보기 시작
                 livePreview.srcObject = stream;
                 livePreview.style.display = 'block';
@@ -1938,6 +2696,7 @@
                 }
 
                 recordedChunks = [];
+                allRecordedChunks = []; // 전체 누적 배열도 초기화
                 console.log('[DEBUG] recordedChunks initialized:', recordedChunks);
 
                 mediaRecorder.ondataavailable = (event) => {
@@ -1961,11 +2720,18 @@
                 statusText.textContent = '녹화 중';
                 statusDot.classList.add('recording');
                 
+                // Part 인디케이터 표시
+                partIndicator.textContent = `Part ${currentPartNumber}`;
+                partIndicator.style.display = 'block';
+                
                 startTimer();
 
                 // Start 버튼 툴팁 제거
                 startRecordBtn.classList.remove('tooltip');
                 startRecordBtn.removeAttribute('data-tooltip');
+
+                // 자동 분할 타이머 시작 (30분)
+                scheduleAutoSplit();
 
                 if (autoStopEnabled) {
                     const { ms, minutes, seconds } = calcAutoStopMs(autoStopMinutesInput.value, autoStopSecondsInput.value);
@@ -1989,9 +2755,7 @@
                 }
             } catch (err) {
                 if (err && err.code === 'NO_AUDIO_TRACK') {
-                    notify('warn', '공유된 화면에서 오디오를 가져올 수 없어 오디오 녹화를 비활성화했습니다. 브라우저 공유 대화상자에서 오디오 공유 옵션을 선택했는지 확인하세요.');
-                    recordAudioCheckbox.checked = false;
-                    handleAudioToggle();
+                    notify('warn', '공유된 화면에서 오디오를 가져올 수 없습니다. 브라우저 공유 대화상자에서 오디오 공유 옵션을 선택했는지 확인하세요.');
                     return;
                 }
 
@@ -2047,23 +2811,32 @@
             clearInterval(timerInterval);
             timerInterval = null;
             timer.textContent = '00:00';
+            
+            // Part 인디케이터 숨기기
+            partIndicator.style.display = 'none';
 
 
             clearAutoStop();
-                autoStopRemainWrapper.style.display = 'none';
-                autoStopRemain.textContent = '00:00';
+            clearAutoSplit(); // 자동 분할 타이머도 정리
+            autoStopRemainWrapper.style.display = 'none';
+            autoStopRemain.textContent = '00:00';
 
-                if (reason === 'AUTO_STOP' && wasRecording) {
-                    notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
-                    autoStopCheckbox.checked = false;
-                    handleAutoStopToggle();
-                }
+            // 수동 종료 시 baseName과 partNumber, allRecordedChunks 초기화
+            baseName = '';
+            currentPartNumber = 1;
+            allRecordedChunks = [];
+
+            if (reason === 'AUTO_STOP' && wasRecording) {
+                notify('info', '자동 종료 시간이 도달하여 녹화를 중지했습니다.');
+                autoStopCheckbox.checked = false;
+                handleAutoStopToggle();
+            }
         }
 
 
         // 녹화 완료 처리
 
-        function handleRecordingStop() {
+        async function handleRecordingStop() {
             console.log('[DEBUG] handleRecordingStop() called');
             console.log('[DEBUG] recordedChunks length:', recordedChunks.length);
             console.log('[DEBUG] recordedChunks:', recordedChunks);
@@ -2087,30 +2860,62 @@
             livePreview.style.display = 'none';
             emptyPreview.style.display = 'none';
             
-            recordingCount++;
             const duration = Math.floor((Date.now() - startTime) / 1000);
             const timestamp = new Date().toLocaleString('ko-KR');
             
-            const suffix = lastRecordingHadAudio ? '_av' : '_v';
+            // 자동 분할 시 baseName_part1, part2... 형식 사용
+            const fileName = baseName ? `${baseName}_part${currentPartNumber}` : `녹화 ${recordingCount}_${lastRecordingHadAudio ? 'av' : 'v'}`;
             
             console.log('[DEBUG] Calling addToList with:', {
                 type: 'video',
                 url: url,
-                name: `녹화 ${recordingCount}${suffix}`,
+                name: fileName,
                 timestamp: timestamp,
                 duration: formatTime(duration)
             });
             
-            addToList('video', url, `녹화 ${recordingCount}${suffix}`, timestamp, formatTime(duration));
-            console.log('[DEBUG] addToList completed');
+            // 다중 파트 녹화 완료 시 사용자에게 저장 옵션 선택 모달 표시
+            if (!isAutoSplitting && currentPartNumber > 1) {
+                allRecordedChunks.push(...recordedChunks);
+                
+                const fullBlob = new Blob(allRecordedChunks, { type: 'video/webm' });
+                const fullUrl = URL.createObjectURL(fullBlob);
+                
+                recordingUrls.push(fullUrl);
+                while (recordingUrls.length > MAX_URLS) {
+                    const old = recordingUrls.shift();
+                    try { URL.revokeObjectURL(old); } catch(_){}
+                }
+                
+                const fullFileName = `${baseName} (전체)`;
+                const totalDuration = Math.floor((Date.now() - startTime) / 1000);
+                
+                const userChoice = await showSaveOptionsModal();
+                
+                if (userChoice === 'parts') {
+                    addToList('video', url, fileName, timestamp, formatTime(duration), duration);
+                    console.log('[DEBUG] Parts only - split video added');
+                } else if (userChoice === 'full') {
+                    addToList('video', fullUrl, fullFileName, timestamp, formatTime(totalDuration), totalDuration);
+                    console.log('[DEBUG] Full only - merged video added');
+                } else if (userChoice === 'both') {
+                    addToList('video', url, fileName, timestamp, formatTime(duration), duration);
+                    addToList('video', fullUrl, fullFileName, timestamp, formatTime(totalDuration), totalDuration);
+                    console.log('[DEBUG] Both - split and merged videos added');
+                }
+            } else {
+                addToList('video', url, fileName, timestamp, formatTime(duration), duration);
+                console.log('[DEBUG] Single part - added to list');
+            }
         }
 
 
 
 
+
         // 기록 목록에 추가
-        function addToList(type, url, name, timestamp, info) {
-            console.log('[DEBUG] addToList() called with:', { type, url, name, timestamp, info });
+        function addToList(type, url, name, timestamp, info, durationInSeconds = 0) {
+            console.log('[DEBUG] addToList() called with:', { type, url, name, timestamp, info, durationInSeconds });
             console.log('[DEBUG] hasRecordings before:', hasRecordings);
             console.log('[DEBUG] recordingsList element:', recordingsList);
             
@@ -2123,15 +2928,37 @@
             item.className = 'recording-item';
             
             const extension = type === 'video' ? 'webm' : document.getElementById('imageFormat').value;
-            console.log('[DEBUG] Item created, extension:', extension);
+            const showWarningTooltip = type === 'video' && durationInSeconds >= 1800; // 30분 = 1800초
+            console.log('[DEBUG] Item created, extension:', extension, 'showWarningTooltip:', showWarningTooltip);
+            
+            let durationBadgeHTML = '';
+            if (type === 'video' && durationInSeconds > 0) {
+                const minutes = Math.floor(durationInSeconds / 60);
+                let badgeClass = 'short';
+                if (minutes >= 30) {
+                    badgeClass = 'long';
+                } else if (minutes >= 10) {
+                    badgeClass = 'medium';
+                }
+                durationBadgeHTML = `<span class="duration-badge ${badgeClass}">${info}</span>`;
+            }
+            
+            let warningHTML = '';
+            if (type === 'video' && durationInSeconds >= 1800) {
+                warningHTML = `<div class="warning-badge">긴 영상은 WebM 오디오 추출 및 MP3 변환 시 불안정할 수 있습니다</div>`;
+            }
+            
             item.innerHTML = `
                 <div class="recording-info">
                     <div class="recording-name" data-original-name="${name}" data-extension="${extension}">${name}</div>
-                    <div class="recording-time">${timestamp} • ${info}</div>
+                    <div class="recording-time">${timestamp}${durationBadgeHTML}</div>
+                    ${warningHTML}
                 </div>
                 <div class="recording-actions">
-                    <button class="edit-btn">수정</button>
-                    <a href="${url}" download="${name}.${extension}" class="download-btn">다운로드</a>
+                    <button class="edit-btn">이름 수정</button>
+                ${type === 'video' ? `<button class="mp3-btn" data-state="loading">WebM 오디오 저장</button>` : ''}
+                ${type === 'video' ? '<button class="mp3-convert-btn" data-state="preparing">MP3 변환</button>' : ''}
+                    <a href="${url}" download="${name}.${extension}" class="download-btn">${type === 'video' ? '영상 다운로드' : '다운로드'}</a>
                 </div>
             `;
             
@@ -2139,19 +2966,38 @@
             const editBtn = item.querySelector('.edit-btn');
             const nameElement = item.querySelector('.recording-name');
             const downloadBtn = item.querySelector('.download-btn');
+            const mp3Btn = item.querySelector('.mp3-btn');
+
+            // 영상 다운로드 후 Object URL 즉시 정리
+            if (type === 'video' && downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    const href = this.getAttribute('href');
+                    setTimeout(() => {
+                        try { URL.revokeObjectURL(href); } catch (_) {}
+                        const idx = recordingUrls.indexOf(href);
+                        if (idx >= 0) recordingUrls.splice(idx, 1);
+                    }, 1000);
+
+                    this.textContent = '다운로드됨';
+                    this.style.pointerEvents = 'none';
+                    this.style.opacity = '0.6';
+                });
+            }
             
-            editBtn.addEventListener('click', function() {
-                const currentName = nameElement.textContent;
+            function setupEditButton() {
+                const currentNameElement = item.querySelector('.recording-name');
+                if (!currentNameElement) return;
+                
+                const currentName = currentNameElement.textContent;
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.className = 'recording-name-input';
                 input.value = currentName;
                 
-                nameElement.replaceWith(input);
+                currentNameElement.replaceWith(input);
                 input.focus();
                 input.select();
                 
-                // 버튼 텍스트를 "저장"으로 변경
                 editBtn.textContent = '저장';
                 editBtn.style.background = 'linear-gradient(135deg, var(--accent-green), #059669)';
                 editBtn.style.borderColor = 'var(--accent-green)';
@@ -2166,28 +3012,30 @@
                     
                     input.replaceWith(newNameElement);
                     
-                    // 다운로드 버튼의 download 속성 업데이트
                     const ext = newNameElement.getAttribute('data-extension');
                     downloadBtn.setAttribute('download', `${newName}.${ext}`);
                     
-                    // 버튼 텍스트를 "수정"으로 복원
+                    if (mp3Btn && mp3Btn.dataset.mp3Url) {
+                        mp3Btn.setAttribute('data-filename', newName);
+                    }
+                    
                     editBtn.textContent = '수정';
                     editBtn.style.background = 'linear-gradient(135deg, var(--accent-blue), #2563eb)';
                     editBtn.style.borderColor = 'var(--accent-blue)';
+                    
+                    editBtn.removeEventListener('click', saveHandler);
+                    editBtn.addEventListener('click', setupEditButton);
                 }
                 
-                // 저장 버튼으로 변경된 상태에서 클릭 시 저장
                 const saveHandler = function(e) {
                     e.stopPropagation();
                     saveEdit();
-                    editBtn.removeEventListener('click', saveHandler);
                 };
                 editBtn.addEventListener('click', saveHandler);
                 
                 input.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         saveEdit();
-                        editBtn.removeEventListener('click', saveHandler);
                     } else if (e.key === 'Escape') {
                         const newNameElement = document.createElement('div');
                         newNameElement.className = 'recording-name';
@@ -2196,22 +3044,56 @@
                         newNameElement.setAttribute('data-extension', this.getAttribute('data-extension') || extension);
                         this.replaceWith(newNameElement);
                         
-                        // 버튼 복원
                         editBtn.textContent = '수정';
                         editBtn.style.background = 'linear-gradient(135deg, var(--accent-blue), #2563eb)';
                         editBtn.style.borderColor = 'var(--accent-blue)';
                         editBtn.removeEventListener('click', saveHandler);
+                        editBtn.addEventListener('click', setupEditButton);
                     }
                 });
-                
-                // data 속성 전달
-                input.setAttribute('data-original-name', nameElement.getAttribute('data-original-name') || currentName);
-                input.setAttribute('data-extension', nameElement.getAttribute('data-extension') || extension);
-            });
+            }
+            
+            editBtn.addEventListener('click', setupEditButton);
+            
+            const mp3ConvertBtn = item.querySelector('.mp3-convert-btn');
+            if (mp3ConvertBtn) {
+                mp3ConvertBtn.addEventListener('click', async function() {
+                    const state = this.dataset.state;
+                    
+                    if (state === 'done') {
+                        const mp3Url = this.dataset.mp3Url;
+                        const recordingName = nameElement.textContent;
+                        if (mp3Url) {
+                            const a = document.createElement('a');
+                            a.href = mp3Url;
+                            a.download = `${recordingName}.mp3`;
+                            a.click();
+                            
+                            this.innerHTML = '<i class="fas fa-check"></i> MP3 다운로드 완료';
+                            this.disabled = true;
+                            delete this.dataset.mp3Url;
+                        }
+                    } else if (state === 'ready') {
+                        startAutoMp3Conversion(item, url);
+                    }
+                });
+            }
             
             console.log('[DEBUG] Inserting item into recordingsList...');
             recordingsList.insertBefore(item, recordingsList.firstChild);
             console.log('[DEBUG] Item inserted. recordingsList.children.length:', recordingsList.children.length);
+            
+            if (type === 'video') {
+                const mp3ConvertBtn = item.querySelector('.mp3-convert-btn');
+                
+                startMp3Conversion(item, url).then(() => {
+                    if (mp3ConvertBtn && mp3ConvertBtn.dataset.state === 'preparing') {
+                        mp3ConvertBtn.dataset.state = 'ready';
+                        mp3ConvertBtn.textContent = 'MP3 변환';
+                        mp3ConvertBtn.disabled = false;
+                    }
+                });
+            }
         }
 
         // 타이머 시작
@@ -2237,6 +3119,25 @@
                     }
                 }
             }, 1000);
+        }
+
+        function showSaveOptionsModal() {
+            return new Promise((resolve) => {
+                saveOptionsModal.style.display = 'flex';
+                
+                const buttons = saveOptionsModal.querySelectorAll('.save-option-btn');
+                
+                const handleChoice = (e) => {
+                    const option = e.currentTarget.dataset.option;
+                    saveOptionsModal.style.display = 'none';
+                    buttons.forEach(btn => btn.removeEventListener('click', handleChoice));
+                    resolve(option);
+                };
+                
+                buttons.forEach(btn => {
+                    btn.addEventListener('click', handleChoice);
+                });
+            });
         }
 
 
@@ -2476,6 +3377,416 @@
         console.log('  - runAutoStopTests()      : 단위 테스트 실행');
         console.log('  - showManualTestGuide()   : 수동 테스트 가이드 보기');
         console.log('');
+
+        // MP3 변환 유틸리티
+        async function extractAudioAsWebM(videoBlob) {
+            console.log('[Audio Extract] Video blob size:', videoBlob.size, 'type:', videoBlob.type);
+            
+            const videoUrl = URL.createObjectURL(videoBlob);
+            const video = document.createElement('video');
+            video.src = videoUrl;
+            video.muted = false;
+            video.playsInline = true;
+            video.preload = 'auto';
+
+            await new Promise((resolve, reject) => {
+                video.onloadedmetadata = () => {
+                    console.log('[Audio Extract] Video metadata loaded. Duration:', video.duration, 'Has audio:', video.mozHasAudio || video.webkitAudioDecodedByteCount > 0 || video.audioTracks?.length > 0);
+                    resolve();
+                };
+                video.onerror = reject;
+            });
+
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) {
+                URL.revokeObjectURL(videoUrl);
+                const e = new Error('AUDIO_CONTEXT_UNSUPPORTED');
+                e.code = 'AUDIO_CONTEXT_UNSUPPORTED';
+                throw e;
+            }
+            const audioContext = new AudioCtx();
+            if (audioContext.state === 'suspended') {
+                try { await audioContext.resume(); } catch (_) {}
+            }
+
+            const source = audioContext.createMediaElementSource(video);
+            const destination = audioContext.createMediaStreamDestination();
+            source.connect(destination);
+
+            const candidates = ['audio/webm;codecs=opus', 'audio/webm'];
+            let selectedMime = null;
+            if (typeof MediaRecorder !== 'undefined' && typeof MediaRecorder.isTypeSupported === 'function') {
+                selectedMime = candidates.find(t => MediaRecorder.isTypeSupported(t)) || null;
+            }
+
+            let recorder;
+            try {
+                recorder = selectedMime
+                    ? new MediaRecorder(destination.stream, { mimeType: selectedMime })
+                    : new MediaRecorder(destination.stream);
+            } catch (_) {
+                recorder = new MediaRecorder(destination.stream);
+            }
+
+            const audioChunks = [];
+            let finished = false;
+
+            return new Promise(async (resolve, reject) => {
+                recorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) audioChunks.push(e.data);
+                };
+
+                recorder.onstop = () => {
+                    if (finished) return;
+                    finished = true;
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    try { URL.revokeObjectURL(videoUrl); } catch (_) {}
+                    try { audioContext.close(); } catch (_) {}
+                    resolve(audioBlob);
+                };
+
+                recorder.onerror = (err) => {
+                    if (finished) return;
+                    finished = true;
+                    try { URL.revokeObjectURL(videoUrl); } catch (_) {}
+                    try { audioContext.close(); } catch (_) {}
+                    reject(err);
+                };
+
+                recorder.start();
+                try {
+                    await video.play();
+                } catch (playErr) {
+                    try { if (audioContext.state === 'suspended') await audioContext.resume(); } catch (_) {}
+                    try {
+                        await video.play();
+                    } catch (_) {
+                        try { recorder.stop(); } catch (_) {}
+                        if (!finished) {
+                            finished = true;
+                            try { URL.revokeObjectURL(videoUrl); } catch (_) {}
+                            try { audioContext.close(); } catch (_) {}
+                            const e = new Error('AUTOPLAY_BLOCKED');
+                            e.code = 'AUTOPLAY_BLOCKED';
+                            reject(e);
+                        }
+                        return;
+                    }
+                }
+
+                video.onended = () => {
+                    try { recorder.stop(); } catch (_) {}
+                };
+            });
+        }
+
+        function updateMp3ButtonState(item, state, data = {}) {
+            const mp3Btn = item.querySelector('.mp3-btn');
+            if (!mp3Btn) return;
+            
+            mp3Btn.className = 'mp3-btn';
+            mp3Btn.dataset.state = state;
+            
+            if (state === 'loading') {
+                mp3Btn.classList.add('loading');
+                mp3Btn.textContent = 'WebM 오디오 추출 중…';
+                mp3Btn.disabled = true;
+                mp3Btn.removeAttribute('data-mp3-url');
+            } else if (state === 'ready') {
+                mp3Btn.classList.add('ready');
+                mp3Btn.textContent = 'WebM 오디오 저장';
+                mp3Btn.disabled = false;
+                mp3Btn.dataset.mp3Url = data.url;
+                mp3Btn.dataset.filename = data.filename;
+
+                // Track and cap audio object URLs
+                if (data.url) {
+                    audioUrls.push(data.url);
+                    const MAX_URLS = 20;
+                    while (audioUrls.length > MAX_URLS) {
+                        const old = audioUrls.shift();
+                        try { URL.revokeObjectURL(old); } catch (_) {}
+                    }
+                }
+                
+                mp3Btn.onclick = function() {
+                    const url = this.dataset.mp3Url;
+                    const filename = this.dataset.filename || 'audio';
+                    if (!url) return;
+
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename + '.webm';
+                    a.click();
+
+                    // Revoke after download and disable button
+                    setTimeout(() => {
+                        try { URL.revokeObjectURL(url); } catch (_) {}
+                        const idx = audioUrls.indexOf(url);
+                        if (idx >= 0) audioUrls.splice(idx, 1);
+                    }, 1000);
+
+                    mp3Btn.textContent = 'WebM 다운로드 완료';
+                    mp3Btn.disabled = true;
+                    mp3Btn.classList.remove('ready');
+                    delete mp3Btn.dataset.mp3Url;
+                };
+            } else if (state === 'failed') {
+                mp3Btn.classList.add('failed');
+                mp3Btn.textContent = '재시도';
+                mp3Btn.disabled = false;
+                mp3Btn.onclick = function() {
+                    const videoUrl = this.dataset.videoUrl;
+                    startMp3Conversion(item, videoUrl);
+                };
+            }
+        }
+
+        async function startMp3Conversion(item, videoUrl) {
+            const mp3Btn = item.querySelector('.mp3-btn');
+            if (!mp3Btn) return;
+            
+            mp3Btn.dataset.videoUrl = videoUrl;
+            updateMp3ButtonState(item, 'loading', { message: '오디오 추출 중…' });
+            
+            try {
+                const response = await fetch(videoUrl);
+                const videoBlob = await response.blob();
+                
+                const audioBlob = await extractAudioAsWebM(videoBlob);
+                
+                const audioUrl = URL.createObjectURL(audioBlob);
+                const nameElement = item.querySelector('.recording-name');
+                const filename = nameElement.textContent.trim();
+                
+                updateMp3ButtonState(item, 'ready', { url: audioUrl, filename });
+                notify('success', '오디오 추출 완료!');
+                
+            } catch (error) {
+                console.error('[Audio] Extraction failed:', error);
+
+                if (error && error.code === 'AUTOPLAY_BLOCKED') {
+                    notify('warn', '브라우저가 자동 재생을 차단했습니다. 화면을 클릭/터치하면 자동으로 재시도합니다.');
+                    // Show waiting state and disable manual retries to prevent double calls
+                    updateMp3ButtonState(item, 'loading', { message: '자동 재시도 대기 중… 화면을 클릭/터치하세요' });
+
+                    if (!autoplayNudgeHandler) {
+                        let retried = false;
+                        const gestureOnce = (evt) => {
+                            if (retried) return;
+                            retried = true;
+                            autoplayNudgeHandler = null;
+                            notify('info', '사용자 동작 감지: 오디오 추출 재시도 중…');
+                            startMp3Conversion(item, videoUrl);
+                        };
+
+                        autoplayNudgeHandler = gestureOnce;
+                        window.addEventListener('pointerdown', gestureOnce, { capture: false, once: true });
+                        window.addEventListener('keydown', gestureOnce, { capture: false, once: true });
+                    }
+                    return;
+                }
+
+                if (error && error.code === 'AUDIO_CONTEXT_UNSUPPORTED') {
+                    notify('error', '이 브라우저에서는 오디오 컨텍스트를 지원하지 않아 오디오 추출을 사용할 수 없습니다. 최신 Chrome/Edge에서 다시 시도하세요.');
+                    updateMp3ButtonState(item, 'failed');
+                    const btn = item.querySelector('.mp3-btn');
+                    if (btn) {
+                        btn.textContent = '미지원';
+                        btn.disabled = true;
+                        btn.onclick = null;
+                    }
+                    return;
+                }
+
+                notify('error', '오디오 추출 실패: ' + (error && error.message ? error.message : '알 수 없는 오류'));
+                updateMp3ButtonState(item, 'failed');
+            }
+        }
+        
+        async function startAutoMp3Conversion(item, videoUrl) {
+            const mp3ConvertBtn = item.querySelector('.mp3-convert-btn');
+            const nameElement = item.querySelector('.recording-name');
+            
+            if (!mp3ConvertBtn) return;
+            
+            mp3ConvertBtn.dataset.state = 'converting';
+            mp3ConvertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 변환 중 0%';
+            mp3ConvertBtn.disabled = true;
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'progress-bar';
+            progressBar.style.width = '0%';
+            mp3ConvertBtn.appendChild(progressBar);
+            
+            try {
+                const response = await fetch(videoUrl);
+                const videoBlob = await response.blob();
+                
+                const videoObjectUrl = URL.createObjectURL(videoBlob);
+                const video = document.createElement('video');
+                video.src = videoObjectUrl;
+                video.muted = false;
+                
+                await new Promise((resolve, reject) => {
+                    video.onloadedmetadata = resolve;
+                    video.onerror = reject;
+                });
+                
+                await video.play();
+                
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const audioContext = new AudioCtx();
+                const source = audioContext.createMediaElementSource(video);
+                const dest = audioContext.createMediaStreamDestination();
+                source.connect(dest);
+                video.volume = 1;
+                
+                const audioChunks = [];
+                const audioRecorder = new MediaRecorder(dest.stream);
+                
+                audioRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) audioChunks.push(e.data);
+                };
+                
+                const audioBlob = await new Promise((resolve) => {
+                    audioRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                        resolve(blob);
+                    };
+                    
+                    audioRecorder.start();
+                    video.currentTime = 0;
+                    video.play();
+                    
+                    video.onended = () => {
+                        audioRecorder.stop();
+                        video.pause();
+                    };
+                });
+                
+                URL.revokeObjectURL(videoObjectUrl);
+                
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                const channelData = audioBuffer.getChannelData(0);
+                const samples = new Int16Array(channelData.length);
+                for (let i = 0; i < channelData.length; i++) {
+                    const s = Math.max(-1, Math.min(1, channelData[i]));
+                    samples[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+                }
+                
+                const workerCode = `
+                    importScripts('https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js');
+
+                    self.addEventListener('message', function(e) {
+                        const { audioBuffer, sampleRate } = e.data;
+                        
+                        try {
+                            const channels = 1;
+                            const kbps = 128;
+                            const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, kbps);
+                            const mp3Data = [];
+                            
+                            const samples = new Int16Array(audioBuffer);
+                            const sampleBlockSize = 1152;
+                            const totalBlocks = Math.ceil(samples.length / sampleBlockSize);
+                            
+                            for (let i = 0; i < samples.length; i += sampleBlockSize) {
+                                const sampleChunk = samples.subarray(i, Math.min(i + sampleBlockSize, samples.length));
+                                const mp3buf = mp3encoder.encodeBuffer(sampleChunk);
+                                
+                                if (mp3buf.length > 0) {
+                                    mp3Data.push(mp3buf);
+                                }
+                                
+                                const progress = Math.min(((i / samples.length) * 100), 99);
+                                self.postMessage({
+                                    type: 'progress',
+                                    progress: progress
+                                });
+                            }
+                            
+                            const mp3buf = mp3encoder.flush();
+                            if (mp3buf.length > 0) {
+                                mp3Data.push(mp3buf);
+                            }
+                            
+                            self.postMessage({
+                                type: 'progress',
+                                progress: 100
+                            });
+                            
+                            const blob = new Blob(mp3Data, { type: 'audio/mp3' });
+                            self.postMessage({
+                                type: 'complete',
+                                blob: blob
+                            });
+                            
+                        } catch (error) {
+                            self.postMessage({
+                                type: 'error',
+                                error: error.message
+                            });
+                        }
+                    });
+                `;
+                
+                const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+                const workerUrl = URL.createObjectURL(workerBlob);
+                const worker = new Worker(workerUrl);
+                
+                worker.onmessage = (e) => {
+                    if (e.data.type === 'progress') {
+                        const progress = Math.floor(e.data.progress);
+                        mp3ConvertBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> 변환 중 ${progress}%`;
+                        progressBar.style.width = `${progress}%`;
+                    } else if (e.data.type === 'complete') {
+                        const mp3Url = URL.createObjectURL(e.data.blob);
+                        const recordingName = nameElement.textContent;
+                        
+                        mp3ConvertBtn.dataset.state = 'done';
+                        mp3ConvertBtn.dataset.mp3Url = mp3Url;
+                        mp3ConvertBtn.innerHTML = '<i class="fas fa-download"></i> MP3 다운로드';
+                        mp3ConvertBtn.disabled = false;
+                        progressBar.remove();
+                        
+                        mp3ConvertBtn.onclick = function() {
+                            const url = this.dataset.mp3Url;
+                            if (!url) return;
+                            
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = recordingName + '.mp3';
+                            a.click();
+                            
+                            this.innerHTML = '<i class="fas fa-check"></i> MP3 다운로드 완료';
+                            this.disabled = true;
+                            delete this.dataset.mp3Url;
+                        };
+                        
+                        worker.terminate();
+                        URL.revokeObjectURL(workerUrl);
+                    } else if (e.data.type === 'error') {
+                        throw new Error(e.data.error);
+                    }
+                };
+                
+                worker.postMessage({
+                    audioBuffer: samples.buffer,
+                    sampleRate: audioBuffer.sampleRate
+                }, [samples.buffer]);
+                
+            } catch (error) {
+                console.error('[Auto MP3 Convert Error]', error);
+                mp3ConvertBtn.dataset.state = 'ready';
+                mp3ConvertBtn.innerHTML = '<i class="fas fa-file-audio"></i> MP3 변환';
+                mp3ConvertBtn.disabled = false;
+                if (progressBar) progressBar.remove();
+            }
+        }
+
     </script>
 </body>
 </html>
