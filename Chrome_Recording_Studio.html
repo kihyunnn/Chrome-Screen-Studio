@@ -67,8 +67,9 @@
             font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
             font-weight: 400;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -88,7 +89,7 @@
 
         .main-container {
             display: flex;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         /* 왼쪽 설정 패널 - 반응형 */
@@ -104,17 +105,18 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
-            height: 100vh;
+            min-height: 100vh;
             scroll-behavior: smooth;
         }
 
         .header-section {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             position: relative;
             margin-bottom: clamp(20px, 3vw, 28px);
             flex-shrink: 0;
+            gap: 16px;
         }
 
         .logo {
@@ -129,6 +131,8 @@
             background-clip: text;
             text-shadow: 0 0 30px var(--accent-blue-glow);
             animation: logoGlow 3s ease-in-out infinite;
+            flex: 1;
+            padding: 0 52px;
         }
 
         .help-button {
@@ -656,8 +660,8 @@
             padding: 25px;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            overflow-y: auto;
         }
 
         .status-bar {
